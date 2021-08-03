@@ -1,7 +1,7 @@
-#include "../headers/node_studend.h"
+#include "../headers/node_student.h"
 
 //Construct
-NodeStudent::NodeStudent(int cardNumber_, int dpi_, string name_, string career_, string email_, string password_, int credits_, int age_){
+NodeStudent::NodeStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_){
     this->cardNumber = cardNumber_;
     this->dpi = dpi_;
     this->name = name_;
@@ -18,7 +18,7 @@ NodeStudent::NodeStudent(int cardNumber_, int dpi_, string name_, string career_
 int NodeStudent::getCardNumber(){
     return this->cardNumber;
 };
-int NodeStudent::getDPI(){
+string NodeStudent::getDPI(){
     return this->dpi;
 };
 string NodeStudent::getName(){
@@ -50,7 +50,7 @@ NodeStudent *NodeStudent::getPrev(){
 void NodeStudent::setCardNumber(int cardNumber_){
     this->cardNumber = cardNumber_;
 };
-void NodeStudent::setDPI(int dpi_){
+void NodeStudent::setDPI(string dpi_){
     this->dpi = dpi_;
 };
 void NodeStudent::setName(string name_){
@@ -79,7 +79,8 @@ void NodeStudent::setPrev(NodeStudent *prev_){
 };
 
 void NodeStudent::showInfo(){
-    cout<<"Carnet:  "<<this->cardNumber<<endl;
-    cout<<"Carrera: "<<this->career<<endl;
-    cout<<"Nombre:  "<<this->name<<endl;
+    cout<<"  >> Carnet:  "<<getCardNumber()<<endl;
+    cout<<"  >> Nombre:  "<<getName()<<endl;
+    cout<<"  >> Carrera: "<<getCareer()<<endl;
+    cout<<" "<<endl;
 }

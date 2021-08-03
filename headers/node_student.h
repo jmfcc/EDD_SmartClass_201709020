@@ -6,7 +6,7 @@ using namespace std;
 class NodeStudent{
 private:
     int cardNumber;
-    int dpi;
+    string dpi;
     string name;
     string career;
     string email;
@@ -18,11 +18,11 @@ private:
 
 public:
     //Construct
-    NodeStudent(int cardNumber_, int dpi_, string name_, string career_, string email_, string password_, int credits_, int age_);
+    NodeStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_);
 
     //Methods - Getters
     int getCardNumber();
-    int getDPI();
+    string getDPI();
     string getName();
     string getCareer();
     string getEmail();
@@ -34,7 +34,7 @@ public:
 
     //Methods - Setters
     void setCardNumber(int cardNumber_);
-    void setDPI(int dpi_);
+    void setDPI(string dpi_);
     void setName(string name_);
     void setCareer(string career_);
     void setEmail(string email_);
