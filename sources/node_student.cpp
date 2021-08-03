@@ -11,6 +11,7 @@ NodeStudent::NodeStudent(int cardNumber_, int dpi_, string name_, string career_
     this->credits = credits_;
     this->age = age_;
     this->next = NULL;
+    this->prev = NULL;
 }
 
 //Methods - Getters
@@ -41,6 +42,9 @@ int NodeStudent::getAge(){
 NodeStudent *NodeStudent::getNext(){
     return this->next;
 };
+NodeStudent *NodeStudent::getPrev(){
+    return this->prev;
+};
 
 //Methods - Setters
 void NodeStudent::setCardNumber(int cardNumber_){
@@ -70,3 +74,12 @@ void NodeStudent::setAge(int age_){
 void NodeStudent::setNext(NodeStudent *next_){
     this->next = next_;
 };
+void NodeStudent::setPrev(NodeStudent *prev_){
+    this->prev = prev_;
+};
+
+void NodeStudent::showInfo(){
+    cout<<"Carnet:  "<<this->cardNumber<<endl;
+    cout<<"Carrera: "<<this->career<<endl;
+    cout<<"Nombre:  "<<this->name<<endl;
+}

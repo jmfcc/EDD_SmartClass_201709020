@@ -14,6 +14,7 @@ private:
     int credits;
     int age;
     NodeStudent *next;
+    NodeStudent *prev;
 
 public:
     //Construct
@@ -29,6 +30,7 @@ public:
     int getCredits();
     int getAge();
     NodeStudent *getNext();
+    NodeStudent *getPrev();
 
     //Methods - Setters
     void setCardNumber(int cardNumber_);
@@ -40,4 +42,7 @@ public:
     void setCredits(int credits_);
     void setAge(int age_);
     void setNext(NodeStudent *next_);
+    void setPrev(NodeStudent *prev_);
+
+    void showInfo();
 };
