@@ -2,6 +2,7 @@
 
 ListStudent::ListStudent(){
     this->head = NULL;
+    this->size = 0;
 }
 
 bool ListStudent::isEmpty(){
@@ -19,7 +20,7 @@ void ListStudent::setSize(string type_){
     }
 }
 
-void ListStudent::insertStudent(int cardNumber_, int dpi_, string name_, string career_, string email_, string password_, int credits_, int age_){
+void ListStudent::insertStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_){
     NodeStudent *newNode = new NodeStudent(cardNumber_, dpi_, name_, career_, email_, password_, credits_, age_);
     
     if (isEmpty()){
@@ -36,6 +37,7 @@ void ListStudent::insertStudent(int cardNumber_, int dpi_, string name_, string 
         this->head->setPrev(newNode);
     }
     setSize("increase");
+    // this->size++;
 }
 
 void ListStudent::showListContent(){
@@ -57,11 +59,11 @@ void ListStudent::showListContent(){
     }
 }
 
-void ListStudent::deleteStudent(int dpi_){
+void ListStudent::deleteStudent(string dpi_){
     //Not implemented
 }
 
-void ListStudent::findStudentDPI(int dpi_){
+void ListStudent::findStudentDPI(string dpi_){
     //Not implemented
 }
 
