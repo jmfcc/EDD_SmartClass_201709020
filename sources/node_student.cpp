@@ -79,8 +79,9 @@ void NodeStudent::setPrev(NodeStudent *prev_){
 };
 
 void NodeStudent::showInfo(){
-    cout<<"  >> Carnet:  "<<getCardNumber()<<endl;
+    cout<<" "<<endl;
     cout<<"  >> Nombre:  "<<getName()<<endl;
     cout<<"  >> Carrera: "<<getCareer()<<endl;
+    cout<<"  >> Carnet:  "<<getCardNumber()<<endl;
     cout<<" "<<endl;
 }

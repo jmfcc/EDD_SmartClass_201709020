@@ -42,18 +42,15 @@ void ListStudent::insertStudent(int cardNumber_, string dpi_, string name_, stri
 
 void ListStudent::showListContent(){
     cout<<"--------------- LISTA DE ESTUDIANTES ----------------"<<endl;
-
     if (this->size > 0){
         int counter = 0;
         while (counter < this->size){
             counter++;
             this->head->showInfo();
             cout<<"-----------------------------------------------------"<<endl;
-            cout<<endl;
             this->head = this->head->getNext();
         }   
     } else {
-        cout<<endl;
         cout<<"              - SIN REGISTROS - "<< endl;
         cout<<endl;
     }
