@@ -2,10 +2,12 @@
 #include <string>
 
 #include "../headers/list_student.h"
+#include "../headers/list_task.h"
 #include "../headers/file_reader.h"
 
 using namespace std;
 
+static ListTask *tasks = new ListTask();
 static ListStudent *students = new ListStudent();
 
 int main(){
@@ -26,6 +28,9 @@ int main(){
 
     students->showListContent();
 
+    tasks->insertTask(201709020, "Tarea de matemática", "Primer tarea unidad 1", "Matemática Aplicada 1", "2021/08/11", "23", "Pendiente");
+
+    tasks->showListContent();
 
     string inputUser;
     // cin.ignore(); // 
