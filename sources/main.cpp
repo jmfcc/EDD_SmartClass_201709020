@@ -1,20 +1,18 @@
 #include <iostream>
-// #include <windows.h>
-// #include <locale.h> // Libreria que contiene la funcion setlocale
+#include <string>
+
 #include "../headers/list_student.h"
 #include "../headers/file_reader.h"
+
+using namespace std;
 
 static ListStudent *students = new ListStudent();
 
 int main(){
-    // char cad[256];
 
-    // SetConsoleOutputCP(1252);
-    // SetConsoleCP(1252);
-    // setlocale(LC_ALL, "es-GT");
-    // readFile("D:\\DEVELOP\\C_C++\\U\\EDD_SmartClass_201709020\\test_files\\Estudiantes.csv");
-
-    cout<<" Noooo puede ser, solo quería verlo con tilde"<<endl;
+    readFile("D:\\DEVELOP\\C_C++\\U\\EDD_SmartClass_201709020\\test_files\\Estudiantes.csv");
+    string msg = u8" Noooo puede ser, solo quería verlo con tilde áéíóú";
+    cout<<msg<<endl;
     cout<<""<<endl;
 
     students->showListContent();
@@ -27,6 +25,14 @@ int main(){
     students->insertStudent(201501786, "7249529279753", "Juan Curiel", "Ingeniería Industrial", "jernimo.caballero@yahoo.com", "zanolexima", 245, 24);
 
     students->showListContent();
+
+
+    string inputUser;
+    // cin.ignore(); // 
+    getline(cin, inputUser);  // input de cadena con espacios
+    // printf(inputUser);
+    // cin >> inputUser;  // Input de una cadena sin espacios
+    cout << inputUser << endl;
 
     system("pause");
 

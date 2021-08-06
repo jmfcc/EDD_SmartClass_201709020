@@ -80,8 +80,8 @@ void NodeStudent::setPrev(NodeStudent *prev_){
 
 void NodeStudent::showInfo(){
     cout<<" "<<endl;
-    cout<<"  >> Nombre:  "<<getName()<<endl;
-    cout<<"  >> Carrera: "<<getCareer()<<endl;
-    cout<<"  >> Carnet:  "<<getCardNumber()<<endl;
+    cout<<"  >> Nombre:  "<<this->name<<endl;
+    cout<<"  >> Carrera: "<<this->career<<endl;
+    cout<<"  >> Carnet:  "<<this->cardNumber<<endl;
     cout<<" "<<endl;
 }

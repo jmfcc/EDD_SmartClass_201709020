@@ -1,3 +1,6 @@
+#ifndef NODESTUDENT_H
+#define NODESTUDENT_H
+
 #include <iostream>
 #include <string>
 
@@ -46,3 +49,5 @@ public:
 
     void showInfo();
 };
+
+#endif

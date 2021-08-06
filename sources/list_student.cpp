@@ -24,10 +24,10 @@ void ListStudent::insertStudent(int cardNumber_, string dpi_, string name_, stri
     NodeStudent *newNode = new NodeStudent(cardNumber_, dpi_, name_, career_, email_, password_, credits_, age_);
     
     if (isEmpty()){
-        //Reference itself
+        //Self-Reference
         newNode->setNext(newNode);
         newNode->setPrev(newNode);
-        //Asign newNode as head
+        //Asign newNode as head pointer
         this->head = newNode;
     } else {
         NodeStudent *aux = this->head->getPrev();
@@ -60,10 +60,10 @@ void ListStudent::deleteStudent(string dpi_){
     //Not implemented
 }
 
-void ListStudent::findStudentDPI(string dpi_){
+void ListStudent::searchStudentDPI(string dpi_){
     //Not implemented
 }
 
-void ListStudent::findStudentCardNumber(int cardNumber_){
+void ListStudent::searchStudentCardNumber(int cardNumber_){
     //Not implemented
 }

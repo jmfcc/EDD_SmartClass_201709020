@@ -1,3 +1,6 @@
+#ifndef LISTSTUDENT_H
+#define LISTSTUDENT_H
+
 #include "node_student.h"
 
 class ListStudent{
@@ -21,7 +24,9 @@ public:
     void deleteStudent(string dpi_);
 
     //Existence validations
-    void findStudentDPI(string dpi_);
-    void findStudentCardNumber(int cardNumber_);
+    void searchStudentDPI(string dpi_);
+    void searchStudentCardNumber(int cardNumber_);
 
 };
+
+#endif
