@@ -3,6 +3,7 @@
 ListStudent::ListStudent(){
     this->head = NULL;
     this->size = 0;
+    this->generates = 1;
 }
 
 bool ListStudent::isEmpty(){
@@ -66,4 +67,67 @@ void ListStudent::searchStudentDPI(string dpi_){
 
 void ListStudent::searchStudentCardNumber(int cardNumber_){
     //Not implemented
+}
+
+void ListStudent::graficar(){
+    int limit = this->size;
+    string commandG = "dot -Tpng archivo.dot -o statusStudents"+to_string(this->generates)+".png";
+    string commandO = "start statusStudents"+to_string(this->generates)+".png";
+    if (isEmpty()){
+        cout<<"\n     --- NO HAY REGISTROS PARA GRAFICAR ---"<<endl;
+    }else{
+        ofstream file;
+        file.open("archivo.dot");
+        cout<<"\n    - Generando archivo .dot -"<<endl;
+        
+        file<<"digraph D {\n";
+        file<<"\trankdir=LR\n";
+        file<<"\tgraph [dpi = 300];\n";
+        file<<"\tnodo_inicio[shape=point];";
+        
+        NodeStudent *aux = this->head;
+        int count = 0;
+
+        do{
+            string formatInfo = "DPI: " + aux->getDPI() 
+            + "\\nCarnet: " + to_string(aux->getCardNumber())
+            + "\\nNombre: " + aux->getName();
+            
+            file<<"\tnodo_"<<count<<"[shape=record,label=\"{<f0>|<f2>";
+            file<<formatInfo;
+            file<<"|<f1>}\"];\n";
+            
+            aux = aux->getNext();
+            count++;
+        } while (aux != head);
+
+        file<<"\n";
+        file<<"\tnodo_inicio->nodo_0[label=\"Primero\"]\n";
+
+        if (limit == 1){
+            file<<"\tnodo_0:f1:n->nodo_0:f0:n\n";
+            file<<"\tnodo_0:f0:s->nodo_0:f1:s\n";
+        }else{
+            for (int i = 1; i < limit; i++){
+                file<<"\tnodo_"<<i-1<<":f1:n";
+                file<<"->";
+                file<<"nodo_"<<i<<":f0:n\n";
+
+                file<<"\tnodo_"<<i<<":f0:s";
+                file<<"->";
+                file<<"nodo_"<<i-1<<":f1:s\n";
+            }
+            file<<"\tnodo_"<<limit-1<<":f1:n";
+            file<<"->nodo_0:f0:n\n";
+
+            file<<"\tnodo_0:f0:s\n";
+            file<<"->nodo_"<<limit-1<<":f1:s";
+        }
+        file<<"}\n";
+        file.close();
+        
+        system(commandG.c_str());
+        system(commandO.c_str());
+        this->generates++;
+    }
 }

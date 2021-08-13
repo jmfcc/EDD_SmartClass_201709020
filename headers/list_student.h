@@ -1,13 +1,15 @@
 #ifndef LISTSTUDENT_H
 #define LISTSTUDENT_H
 
+#include <fstream>
+#include <string>
 #include "node_student.h"
 
 class ListStudent{
 private:
     NodeStudent *head;
     int size;
-
+    int generates;
 public:
     //Construct
     ListStudent();
@@ -27,6 +29,7 @@ public:
     void searchStudentDPI(string dpi_);
     void searchStudentCardNumber(int cardNumber_);
 
+    void graficar();
 };
 
 #endif
