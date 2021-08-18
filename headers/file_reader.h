@@ -18,4 +18,7 @@ string setIndexHeadersStudent(string text_, string pattern_);
 
 int getIndexAssignSH(string name_);
 
+bool validaDato(string value_, int longitud_);
+bool validaNumero(string value_);
+
 #endif
