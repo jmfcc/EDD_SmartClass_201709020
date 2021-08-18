@@ -38,25 +38,44 @@ void splitTextStudent(string text_, string pattern_, string indx_, ListStudent *
     studentData[count] = text_; //dado que el texto restante no posee el "delimitador" al final, este utlimo texto se almacena fuera del ciclo
     
     //Funcion que castea a enteron un string
-    int listPos[8];
+    int listPos[8] = {0,0,0,0,0,0,0,0};
     for (int i = 0; i < 8; i++){
         listPos[i] = indx_[i]-'0'; // Obtiene el orden de indice para enviar los datos a su parametro correcto
     }
     
-    if (!validaDato(studentData[listPos[0]], 9)){
-        cout<<"Error: El carnet no tiene la cantidad de digitos esperados"<<endl;
+    if (!validaLongitud(studentData[listPos[0]], 9)){
+        string msg = "El carnet no tiene la cantidad de digitos esperados";
+        stud->insertErrorStudent(0, studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
         return;
     } 
     else if (!validaNumero(studentData[listPos[0]])){
-        cout<<"Error: El carnet posee valores no numericos"<<endl;
+        string msg = "El carnet posee valores no numericos";
+        stud->insertErrorStudent(0, studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
         return;
     } 
-    else if (!validaDato(studentData[listPos[1]],13)){
-        cout<<"Error: El dpi no tiene la cantidad de digitos esperados"<<endl;
+    else if (!validaLongitud(studentData[listPos[1]],13)){
+        string msg = "El dpi no tiene la cantidad de digitos esperados";
+        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
         return;
     } 
     else if (!validaNumero(studentData[listPos[1]])){
-        cout<<"Error: El dpi posee valores no numericos"<<endl;
+        string msg = "El dpi posee valores no numericos";
+        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
+        return;
+    } 
+    else if (stud->searchStudentByCardNumber(std::stoi(studentData[listPos[0]]))){
+        string msg = "El carnet ya está registrado";
+        stud->insertErrorStudent(0, studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
+        return;
+    } 
+    else if (stud->searchStudentByDPI(studentData[listPos[1]])){
+        string msg = "El dpi ya esta registrado";
+        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
+        return;
+    } 
+    else if (!validaCorreo(studentData[listPos[4]])){
+        string msg = "El correo posee un formato incorrecto";
+        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
         return;
     } else{
         stud->insertStudent(std::stoi(studentData[listPos[0]]), studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]));
@@ -95,16 +114,4 @@ int getIndexAssignSH(string name_){
         }
     }
     return -1;
-}
-
-bool validaDato(string value_, int longitud_){
-    return value_.length() == longitud_;
-}
-bool validaNumero(string value_){
-    for (int i = 0; i < value_.length(); i++){
-        if (!isdigit(value_[i])){
-            return false;
-        }
-    }
-    return true;
 }

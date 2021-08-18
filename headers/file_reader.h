@@ -5,9 +5,9 @@
 #include <string>
 #include <fstream>
 #include "../headers/list_student.h"
-// #include "../headers/myLists.h"
+#include "../headers/validations.h"
 using namespace std;
-
+//                                   0       1      2         3        4         5           6        7
 static string studentFormat[8] = {"Carnet","DPI","Nombre","Carrera","Correo","Password","Creditos","Edad"};
 
 void readFileStudent(string path_, ListStudent *stud);
@@ -17,8 +17,5 @@ void splitTextStudent(string text_, string pattern_, string indx_, ListStudent *
 string setIndexHeadersStudent(string text_, string pattern_);
 
 int getIndexAssignSH(string name_);
-
-bool validaDato(string value_, int longitud_);
-bool validaNumero(string value_);
 
 #endif
