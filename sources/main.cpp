@@ -19,6 +19,7 @@ int getIntegerInput();
 string getExistFileURLInput();
 
 int main(){
+    students->setColaRef(errors);
     // SetConsoleOutputCP(CP_UTF8);
     // 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
     // tasks->insertTask(201709020, "Tarea de matematica", "Primer tarea unidad 1", "Matematica Aplicada 1", "2021/08/11", "23", "Pendiente");
@@ -99,6 +100,7 @@ void mySwitch(int opcion){
         case 5:
             // students->showListContent();
             students->graficar();
+            errors->graficar();
             break;
     }
 }
