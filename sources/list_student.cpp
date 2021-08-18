@@ -2,8 +2,12 @@
 
 ListStudent::ListStudent(){
     this->head = NULL;
+    this->refError = NULL;
     this->size = 0;
     this->generates = 1;
+}
+void ListStudent::setColaRef(Cola *refError_){
+    this->refError = refError_;
 }
 
 bool ListStudent::isEmpty(){
@@ -41,6 +45,11 @@ void ListStudent::insertStudent(int cardNumber_, string dpi_, string name_, stri
     // this->size++;
 }
 
+void ListStudent::insertErrorStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_, string infoErr_){
+    NodeStudent *newNode = new NodeStudent(cardNumber_, dpi_, name_, career_, email_, password_, credits_, age_);
+    this->refError->queue(newNode, infoErr_);
+}
+
 void ListStudent::showListContent(){
     cout<<"--------------- LISTA DE ESTUDIANTES ----------------"<<endl;
     if (this->size > 0){
@@ -61,24 +70,43 @@ void ListStudent::deleteStudent(string dpi_){
     //Not implemented
 }
 
-void ListStudent::searchStudentDPI(string dpi_){
-    //Not implemented
+bool ListStudent::searchStudentByDPI(string dpi_){
+    if (this->size > 0){
+        NodeStudent *aux = this->head;
+        do {
+            if (aux->getDPI() == dpi_){
+                return true;
+            }
+            aux = aux->getNext();
+        } while (aux != this->head);
+    }
+    return false;
 }
 
-void ListStudent::searchStudentCardNumber(int cardNumber_){
-    //Not implemented
+bool ListStudent::searchStudentByCardNumber(int cardNumber_){
+    if (this->size > 0){
+        NodeStudent *aux = this->head;
+        do {
+            if (aux->getCardNumber() == cardNumber_){
+                return true;
+            }
+            aux = aux->getNext();
+        } while (aux != this->head);
+        
+    }
+    return false;
 }
 
 void ListStudent::graficar(){
     int limit = this->size;
-    string commandG = "dot -Tpng archivo.dot -o statusStudents"+to_string(this->generates)+".png";
+    string commandG = "dot -Tpng students.dot -o statusStudents"+to_string(this->generates)+".png";
     string commandO = "start statusStudents"+to_string(this->generates)+".png";
     if (isEmpty()){
         cout<<"\n     --- NO HAY REGISTROS PARA GRAFICAR ---"<<endl;
     }else{
         ofstream file;
-        file.open("archivo.dot");
-        cout<<"\n    - Generando archivo .dot -"<<endl;
+        file.open("students.dot");
+        cout<<"\n    - Generando students.dot -"<<endl;
         
         file<<"digraph D {\n";
         file<<"\trankdir=LR\n";
