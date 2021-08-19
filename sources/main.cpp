@@ -21,7 +21,7 @@ string getExistFileURLInput();
 int main(){
     students->setColaRef(errors);
     // SetConsoleOutputCP(CP_UTF8);
-    // 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
+    
     // tasks->insertTask(201709020, "Tarea de matematica", "Primer tarea unidad 1", "Matematica Aplicada 1", "2021/08/11", "23", "Pendiente");
 
     // tasks->showListContent();
@@ -46,8 +46,8 @@ void menu(){
         cout<<"-------------------------------------------------------"<<endl<<endl;
         cout<<"  [1] Cargar masiva - Usuarios\n";
         cout<<"  [2] Cargar masiva - Tareas\n"; 
-        cout<<"  [3] Ingreso Manual - Usuarios\n";
-        cout<<"  [4] Ingreso Manual - Tareas\n";
+        cout<<"  [3] Operaciones Manuales (Usuarios)\n";
+        cout<<"  [4] Operaciones Manuales (Tareas)\n";
         cout<<"  [5] Reportes\n  [6] Salir\n"<<endl;
         cout<<"   >> Elija una opcion: ";
         int opcion;
@@ -57,7 +57,7 @@ void menu(){
                 cout<<endl;
                 mySwitch(opcion);
                 system("pause");
-                system("clear");
+                system("cls");
             } else if (opcion == 6){
                 cout<<"   >> Finalizando programa"<<endl;
                 system("pause");
@@ -79,6 +79,7 @@ void menu(){
 void mySwitch(int opcion){
     string param01;
     int edad_ = 0;
+    int opt = 0;
     switch (opcion){
         case 1:
             cout<<"   >> Ingresa el la ruta del archivo: ";
@@ -88,14 +89,30 @@ void mySwitch(int opcion){
                 readFileStudent(param01, students);
             }
             break;
-        case 2:
-            // cola->dequeue();
+        case 2: // Cargar masiva - Tareas
             break;
-        case 3:
-            // cola->recorrer();
+        case 3: // Ingreso Manual - Usuarios
+            cout<<"     1 - Agregar un nuevo estudiante"<<endl;
+            cout<<"     2 - Editar registro de estudiante"<<endl;
+            cout<<"     3 - Eliminar registro de estudiante"<<endl;
+            cout<<"     4 - Regresar al menu principal"<<endl;
+            do {
+                cout<<"     >> Ingresa una opcion: ";
+                opt = getIntegerInput();
+                if (opt < 1 && opt > 4){
+                    cout<<"      --> Error: Debe elegir un numero de opcion correcta";
+                }
+            } while (opt < 1 && opt > 4);
+            
+            if (opt == 1){
+                students->insertStudentByConsole();
+            } else if (opt == 2){
+                students->editStudentData();
+            } else if (opt == 3){
+                students->deleteStudent();
+            }
             break;
-        case 4:
-            // cola->graficar();
+        case 4: // Ingreso Manual - Tareas
             break;
         case 5:
             // students->showListContent();
@@ -112,7 +129,7 @@ int getIntegerInput(){
         // cin.ignore();
         getline(cin, valueInput);
         for (int i = 0; i < valueInput.length(); i++){
-            if (isdigit(valueInput[i]) == 0){
+            if (!isdigit(valueInput[i])){
                 return value;
             }
         }
