@@ -6,6 +6,22 @@ ListStudent::ListStudent(){
     this->size = 0;
     this->generates = 1;
 }
+
+string ListStudent::getInputDPI(){
+    string dpi_ = "";
+    do {
+        dpi_= "";
+        cout<<"   >> Ingresa el numero de DPI del estudiante: ";
+        getline(cin, dpi_);
+        if (dpi_ == ""){
+            cout<<"   >> Ingresa un numero de DPI valido"<<endl;
+            dpi_ = "x";
+        }
+    } while (!validaLongitud(dpi_, 13) && !validaNumero(dpi_));
+    
+    return dpi_;
+}
+
 void ListStudent::setColaRef(Cola *refError_){
     this->refError = refError_;
 }
@@ -66,8 +82,42 @@ void ListStudent::showListContent(){
     }
 }
 
-void ListStudent::deleteStudent(string dpi_){
-    //Not implemented
+void ListStudent::deleteStudent(){
+    string dpi_ = getInputDPI();
+
+    if (searchStudentByDPI(dpi_)){
+        NodeStudent *aux = this->head;
+        while (aux->getDPI() != dpi_){
+            aux = aux->getNext();
+        }
+        string confirm = "";
+        cout<<"    >> Aviso: Esta seguro que desea eliminar los registros de "<<aux->getCardNumber()<<" (Y/N)?: ";
+        getline(cin, confirm);
+        if (confirm == "Y" || confirm == "y"){
+            if (aux == head){
+                if (this->size == 1){
+                    this->head = NULL;
+                } else {
+                    this->head = this->head->getNext();
+                    this->head->setPrev(aux->getPrev());
+                    aux = NULL;
+                    aux = this->head->getPrev();
+                    aux->setNext(this->head);
+                }
+            } else {
+                aux = aux->getNext();
+                aux->setPrev(aux->getPrev()->getPrev());
+                aux->getPrev()->setNext(aux);
+            }
+            this->size--;
+            cout<<"     --> Se ha completado la operacion"<<endl;
+        } else {
+            cout<<"     --> Se ha anulado la operacion"<<endl;
+        }
+    } else {
+        cout<<"   >> Error: No hubo coincidencia del DPI ingresado"<<endl;
+    }
+
 }
 
 bool ListStudent::searchStudentByDPI(string dpi_){
@@ -95,6 +145,226 @@ bool ListStudent::searchStudentByCardNumber(int cardNumber_){
         
     }
     return false;
+}
+
+void ListStudent::insertStudentByConsole(){
+    cout<<"\n  ------ Agregar Estudiante -----------"<<endl;
+    cout<<"  Nota: Para cancelar la operacion, deje un campo vacio y presione enter"<<endl;
+    string data[8] = {"", "", "", "", "", "", "", ""};
+    bool init = true;
+    for (int i=0; i<8; i++){
+        bool isOk = false;
+        while (!isOk) {
+            switch (i) {
+                case 0:
+                    cout<<"     >> Ingresa el numero de carnet: ";
+                    break;
+                case 1:
+                    cout<<"     >> Ingresa el numero de DPI: ";
+                    break;
+                case 2:
+                    cout<<"     >> Ingresa el nombre: ";
+                    break;
+                case 3:
+                    cout<<"     >> Ingresa la carrera: ";
+                    break;
+                case 4:
+                    cout<<"     >> Ingresa el correo: ";
+                    break;
+                case 5:
+                    cout<<"     >> Ingresa la contrasenia: ";
+                    break;
+                case 6:
+                    cout<<"     >> Ingresa el numero de creditos: ";
+                    break;
+                case 7:
+                    cout<<"     >> Ingresa la edad: ";
+                    break;
+            }
+            string input = "";
+            // if (init){
+            //     cin.ignore();
+            //     init = false;
+            // }
+            getline(cin, input);
+            if (input != ""){
+                switch (i) {
+                    case 0: //Carnet
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaLongitud(input, 9)){
+                            cout<<"       --> Error: La longitud del carnet es distinta de la esperada"<<endl;
+                        } else if (searchStudentByCardNumber(stoi(input))){
+                            cout<<"       --> Error: El carnet ingresado ya esta registrado"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 1:  // DPI
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaLongitud(input, 13)){
+                            cout<<"       --> Error: La longitud del carnet es distinta de la esperada"<<endl;
+                        } else if (searchStudentByDPI(input)){
+                            cout<<"       --> Error: El numero de DPI ya esta registrado"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 4:  // Email
+                        if (!validaCorreo(input)){
+                            cout<<"       --> Error: Debe ingresar un correo valido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 6:  // Credits
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: Debe ingresar un valor numerico"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 7: // Age
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: Debe ingresar un valor numerico"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    default:  // Name, Carrer, Password
+                        data[i] = input;
+                        isOk = true;
+                        break;
+                }
+            }else{
+                cout<<"     --> Se ha anulado la operacion"<<endl;
+                return;
+            }
+        }
+    }
+    insertStudent(stoi(data[0]), data[1], data[2], data[3], data[4], data[5], stoi(data[6]), stoi(data[7]));
+    cout<<"\n   >> Se ha guardado el registro"<<endl;
+}
+
+void ListStudent::editStudentData(){
+    string dpi_ = getInputDPI();
+
+    if (searchStudentByDPI(dpi_)){
+        NodeStudent *aux = this->head;
+        while (aux->getDPI() != dpi_){
+            aux = aux->getNext();
+        }
+        bool edit = true;
+        string option = "";
+        while (edit) {
+            cout<<"\n  --------- Editar Estudiante -----------"<<endl;
+            cout<<"   Nota: Para cancelar una modificacion, deje el campo vacio y presione enter"<<endl;
+            cout<<"\n   1 - Carnet (No editable): "<<aux->getCardNumber()<<endl;
+            cout<<"   2 - DPI  (No editable):   "<<aux->getDPI()<<endl;
+            cout<<"   3 - Nombre (Actual):      "<<aux->getName()<<endl;
+            cout<<"   4 - Carrera (Actual):     "<<aux->getCareer()<<endl;
+            cout<<"   5 - Correo (Actual):      "<<aux->getEmail()<<endl;
+            cout<<"   6 - Contrasenia (Actual): "<<aux->getPassword()<<endl;
+            cout<<"   7 - Creditos (Actual):    "<<aux->getCredits()<<endl;
+            cout<<"   8 - Edad (Actual):        "<<aux->getAge()<<endl;
+            cout<<"   9 - Finalizar edicion"<<endl;
+            do
+            {
+                option = "";
+                cout<<"   >> Selecciona una opcion: ";
+                getline(cin, option);
+                if (option == ""){
+                    cout<<"     --> Error: Debe seleccionar una opcion"<<endl;
+                    option = "x";
+                } else if (!validaNumero(option)){
+                    cout<<"     --> Error: La opcion debe ser numerica"<<endl;
+                }else if (stoi(option) > 0 && stoi(option) < 3){
+                    cout<<"     --> Error: La opcion no es editable"<<endl;
+                    option = " ";
+                }else if (stoi(option) > 9 || stoi(option) < 0){
+                    cout<<"     --> Error: La opcion debe ser del rango de 3-8"<<endl;
+                    option += "error";
+                }
+            } while (!validaNumero(option));
+            
+
+            switch (stoi(option)-1) {
+                case 2:
+                    cout<<"     >> Ingresa el nombre: ";
+                    break;
+                case 3:
+                    cout<<"     >> Ingresa la carrera: ";
+                    break;
+                case 4:
+                    cout<<"     >> Ingresa el correo: ";
+                    break;
+                case 5:
+                    cout<<"     >> Ingresa la contrasenia: ";
+                    break;
+                case 6:
+                    cout<<"     >> Ingresa el numero de creditos: ";
+                    break;
+                case 7:
+                    cout<<"     >> Ingresa la edad: ";
+                    break;
+                case 8:
+                    return;
+            }
+            
+            string input = "";
+            getline(cin, input);
+            if (input != ""){
+                switch (stoi(option)-1) {
+                    case 2:  // Name
+                        aux->setName(input);
+                        break;
+                    case 3:  // Career
+                        aux->setCareer(input);
+                        break;
+                    case 4:  // Email
+                        if (!validaCorreo(input)){
+                            cout<<"       --> Error: Debe ingresar un correo valido"<<endl;
+                        } else {
+                            aux->setEmail(input);
+                        }
+                        break;
+                    case 5:  // Password
+                        aux->setPassword(input);
+                        break;
+                    case 6:  // Credits
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: Debe ingresar un valor numerico"<<endl;
+                        } else {
+                            aux->setCredits(stoi(input));
+                        }
+                        break;
+                    case 7: // Age
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: Debe ingresar un valor numerico"<<endl;
+                        } else {
+                            aux->setAge(stoi(input));
+                        }
+                        break;
+                    case 8:  // Finalizar
+                        edit = false;
+                        break;
+                }
+            }else{
+                cout<<"     --> Se ha anulado la operacion"<<endl;
+                return;
+            }
+        }
+        // cout<<"\n   >> Se han guardado los cambios"<<endl;
+    } else {
+        cout<<"   >> Error: No hubo coincidencia del DPI ingresado"<<endl;
+    }
+
 }
 
 void ListStudent::graficar(){

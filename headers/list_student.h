@@ -5,6 +5,7 @@
 #include <string>
 #include "node_student.h"
 #include "cola.h"
+#include "validations.h"
 
 class ListStudent{
 private:
@@ -12,6 +13,9 @@ private:
     Cola *refError;
     int size;
     int generates;
+
+    string getInputDPI();
+
 public:
     //Construct
     ListStudent();
@@ -28,11 +32,14 @@ public:
     void insertErrorStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_, string infoErr_);
     void showListContent();
     
-    void deleteStudent(string dpi_);
+    void deleteStudent();
 
     //Existence validations
     bool searchStudentByDPI(string dpi_);
     bool searchStudentByCardNumber(int cardNumber_);
+
+    void insertStudentByConsole();
+    void editStudentData();
 
     void graficar();
 };
