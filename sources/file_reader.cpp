@@ -42,43 +42,38 @@ void splitTextStudent(string text_, string pattern_, string indx_, ListStudent *
     for (int i = 0; i < 8; i++){
         listPos[i] = indx_[i]-'0'; // Obtiene el orden de indice para enviar los datos a su parametro correcto
     }
+    string msg = "";
+
+    if (!validaNumero(studentData[listPos[0]])){
+        msg += "\\nEl carnet posee valores no numericos";
+        studentData[listPos[0]] = "0";
+    } else if (!validaLongitud(studentData[listPos[0]], 9)){
+        msg += "\\nEl carnet no tiene la cantidad de digitos esperados";
+        studentData[listPos[0]] = "0";
+    } else if (stud->searchStudentByCardNumber(std::stoi(studentData[listPos[0]]))){
+        msg += "\\nEl carnet ya está registrado";
+        studentData[listPos[0]] = "0";
+    }
+
+    if (!validaNumero(studentData[listPos[1]])){
+        msg += "\\nEl dpi posee valores no numericos";
+        studentData[listPos[1]] = "0";
+    } else if (!validaLongitud(studentData[listPos[1]],13)){
+        msg += "\\nEl dpi no tiene la cantidad de digitos esperados";
+        studentData[listPos[1]] = "0";
+    } else if (stud->searchStudentByDPI(studentData[listPos[1]])){
+        msg += "\\nEl dpi ya esta registrado";
+        studentData[listPos[1]] = "0";
+    }
     
-    if (!validaLongitud(studentData[listPos[0]], 9)){
-        string msg = "El carnet no tiene la cantidad de digitos esperados";
-        stud->insertErrorStudent(0, studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } 
-    else if (!validaNumero(studentData[listPos[0]])){
-        string msg = "El carnet posee valores no numericos";
-        stud->insertErrorStudent(0, studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } 
-    else if (!validaLongitud(studentData[listPos[1]],13)){
-        string msg = "El dpi no tiene la cantidad de digitos esperados";
-        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } 
-    else if (!validaNumero(studentData[listPos[1]])){
-        string msg = "El dpi posee valores no numericos";
-        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } 
-    else if (stud->searchStudentByCardNumber(std::stoi(studentData[listPos[0]]))){
-        string msg = "El carnet ya está registrado";
-        stud->insertErrorStudent(0, studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } 
-    else if (stud->searchStudentByDPI(studentData[listPos[1]])){
-        string msg = "El dpi ya esta registrado";
-        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } 
-    else if (!validaCorreo(studentData[listPos[4]])){
-        string msg = "El correo posee un formato incorrecto";
-        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), "0", studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
-        return;
-    } else{
+    if (!validaCorreo(studentData[listPos[4]])){
+        msg += "\\nEl correo posee un formato incorrecto";
+        studentData[listPos[4]] = "";
+    }
+    if (msg == "") {
         stud->insertStudent(std::stoi(studentData[listPos[0]]), studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]));
+    } else {
+        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
     }
     // students->showListContent();
     // system("pause");
