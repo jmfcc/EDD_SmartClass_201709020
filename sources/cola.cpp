@@ -57,7 +57,7 @@ void Cola::graficar(){
     string commandG = "dot -Tpng errores.dot -o statusErrors"+to_string(this->generates)+".png";
     string commandO = "start statusErrors"+to_string(this->generates)+".png";
     if (estaVacia()){
-        cout<<"\n     --- NO HAY REGISTROS PARA GRAFICAR ---"<<endl;
+        cout<<"\n     --- NO HAY REGISTROS EN COLA DE ERRORES PARA GRAFICAR ---"<<endl;
     }else{
         ofstream file;
         file.open("errores.dot");
