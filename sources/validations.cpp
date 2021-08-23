@@ -53,3 +53,32 @@ bool validaEstado(string value_){
     }
     return false;
 }
+
+bool validaFecha(string value_){
+    if (regex_match(value_, regex("[0-9]{4}/[0-9]{2}/[0-9]{2}"))){
+        string dateF[3] = {"", "", ""};
+        string token = "";
+        int count = 0;
+        for (int i = 0; i < value_.length(); i++){
+            if (value_[i] != '/'){
+                token += value_[i];
+            } else {
+                dateF[count] = token;
+                token = "";
+                count++;
+            }
+        }
+        dateF[count] = token;
+
+        if (stoi(dateF[0]) != 2021){
+            return false;
+        } else if (!validaMes(stoi(dateF[1]))){
+            return false;
+        } else if (!validaDia(stoi(dateF[2]))){
+            return false;
+        }
+    } else {
+        return false;
+    }
+    return true;
+}
