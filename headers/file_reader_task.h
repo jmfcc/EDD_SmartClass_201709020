@@ -12,6 +12,7 @@ using namespace std;
 static string TaskFormat[9] = {"Carnet","Nombre","Descripcion","Materia","Fecha","Hora","Estado","Mes", "Dia"};
 
 void readFileTask(string path_, ListTask *task_);
+// void readFileTask(string path_, MatrixNode *refMatx, ListTask *task_);
 
 void splitTextTask(string text_, string pattern_, string indx_, ListTask *task_);
 

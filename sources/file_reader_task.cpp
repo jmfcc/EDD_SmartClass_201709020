@@ -1,5 +1,6 @@
 #include "../headers/file_reader_task.h"
 
+// void readFileTask(string path_, MatrixNode *refMatx, ListTask *tsk){
 void readFileTask(string path_, ListTask *tsk){
     cout<<" >> Path File: "<<path_<<endl;
 
@@ -20,6 +21,7 @@ void readFileTask(string path_, ListTask *tsk){
     }
 
     myFile.close();
+    tsk->insertRowMajor();
     // delete [] indexHeaders;
 }
 
@@ -80,8 +82,13 @@ void splitTextTask(string text_, string pattern_, string indx_, ListTask *tsk){
         taskData[listPos[8]] = "0";
     }
     
+    if (!validaFecha(taskData[listPos[4]])){
+        msg += "\\nLa fecha no es válida";
+        taskData[listPos[6]] = "";
+    }
+
     if (!validaEstado(taskData[listPos[6]])){
-        msg += "\nEl estado no valido";
+        msg += "\\nEl estado no es valido";
         taskData[listPos[6]] = "";
     }
     // if (!validaCorreo(taskData[listPos[4]])){
