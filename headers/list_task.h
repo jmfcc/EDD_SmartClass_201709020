@@ -2,6 +2,7 @@
 #define LISTTASK_H
 
 #include "node_task.h"
+#include "matrix_node_task.h"
 #include "cola.h"
 #include "list_student.h"
 #include "validations.h"
@@ -12,7 +13,7 @@ private:
     ListStudent *refStud;
     Cola *refError;
     NodeTask *head; // List
-    NodeTask *myArrTask[5][30][9]; // Array
+    MatrixNode *myArrTask[5][30][9]; // Array
     int generates;
 
 public:
@@ -28,7 +29,7 @@ public:
     void setSize(string type_);
 
     void insertTaskArray(int indxM, int indxD, int indxH, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_);
-
+    void insertRowMajor();
     void insertTask(int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_);
     void insertErrorTask(int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_, string infoErr_);
 
@@ -43,6 +44,8 @@ public:
 
     //Others
     bool existCardNumber(int cardNumber_);
+
+    void graficar();
 };
 
 #endif
