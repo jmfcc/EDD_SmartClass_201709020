@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../headers/file_reader.h"
+#include "../headers/file_reader_task.h"
 #include "../headers/list_student.h"
 #include "../headers/list_task.h"
 #include "../headers/cola.h"
@@ -20,6 +21,8 @@ string getExistFileURLInput();
 
 int main(){
     students->setColaRef(errors);
+    tasks->setColaRef(errors);
+    tasks->setStudentRef(students);
     // SetConsoleOutputCP(CP_UTF8);
     
     // tasks->insertTask(201709020, "Tarea de matematica", "Primer tarea unidad 1", "Matematica Aplicada 1", "2021/08/11", "23", "Pendiente");
@@ -90,6 +93,12 @@ void mySwitch(int opcion){
             }
             break;
         case 2: // Cargar masiva - Tareas
+            cout<<"   >> Ingresa el la ruta del archivo: ";
+            // cin>>nombre_;
+            param01 = getExistFileURLInput();
+            if (param01 != ""){
+                readFileTask(param01, tasks);
+            }
             break;
         case 3: // Ingreso Manual - Usuarios
             cout<<"     1 - Agregar un nuevo estudiante"<<endl;
@@ -118,6 +127,7 @@ void mySwitch(int opcion){
             // students->showListContent();
             students->graficar();
             errors->graficar();
+            tasks->showMatrixContent();
             break;
     }
 }
@@ -141,7 +151,7 @@ int getIntegerInput(){
     return value;
 }
 
-bool fileExists( std::string const& name ) {
+bool fileExists(string const& name ) {
     ifstream f(name.c_str());
     return f.good();
 }
