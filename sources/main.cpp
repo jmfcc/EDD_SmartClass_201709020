@@ -10,19 +10,21 @@
 
 using namespace std;
 
-static Cola *errors = new Cola();
-static ListTask *tasks = new ListTask();
-static ListStudent *students = new ListStudent();
+Cola *errors = new Cola();
+ListTask *tasks = new ListTask();
+ListStudent *students = new ListStudent();
 
 void menu();
 void mySwitch(int);
 int getIntegerInput();
+void fillMatrixTask(string param_);
 string getExistFileURLInput();
 
 int main(){
     students->setColaRef(errors);
     tasks->setColaRef(errors);
     tasks->setStudentRef(students);
+
     // SetConsoleOutputCP(CP_UTF8);
     
     // tasks->insertTask(201709020, "Tarea de matematica", "Primer tarea unidad 1", "Matematica Aplicada 1", "2021/08/11", "23", "Pendiente");
@@ -98,6 +100,8 @@ void mySwitch(int opcion){
             param01 = getExistFileURLInput();
             if (param01 != ""){
                 readFileTask(param01, tasks);
+                // tasks->insertRowMajor();
+                // fillMatrixTask(param01);
             }
             break;
         case 3: // Ingreso Manual - Usuarios
@@ -127,7 +131,8 @@ void mySwitch(int opcion){
             // students->showListContent();
             students->graficar();
             errors->graficar();
-            tasks->showMatrixContent();
+            // tasks->showMatrixContent();
+            tasks->graficar();
             break;
     }
 }
@@ -171,4 +176,19 @@ string getExistFileURLInput(){
     catch(const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
+}
+
+void fillMatrixTask(string param_){
+    MatrixNode *myArrTask[5][30][9]; // Array
+    
+    for (int i = 0; i<5; i++){
+        for (int j = 0; j<30; j++){
+            for (int k = 0; k<9; k++){
+                myArrTask[i][j][k] = NULL;
+            }
+        }
+    }
+
+    // readFileTask(param_, myArrTask, tasks);
+    tasks->insertRowMajor();
 }
