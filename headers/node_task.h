@@ -14,13 +14,15 @@ private:
     string taskDesc;
     string course;
     string date;
-    string hour;
+    int hour;
     string status;
+    int month;
+    int day;
     NodeTask *next;
     NodeTask *prev;
 
 public:
-    NodeTask(int id_, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, string hour_, string status_);
+    NodeTask(int id_, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_);
 
     int getID();
     int getCardNumber();
@@ -28,8 +30,11 @@ public:
     string getTaskDesc();
     string getCourse();
     string getDate();
-    string getHour();
+    int getHour();
     string getStatus();
+    int getMonth();
+    int getDay();
+
     NodeTask *getNext();
     NodeTask *getPrev();
 
@@ -39,8 +44,10 @@ public:
     void setTaskDesc(string taskDesc_);
     void setCourse(string course_);
     void setDate(string date_);
-    void setHour(string hour_);
+    void setHour(int hour_);
     void setStatus(string status_);
+    void setMonth(int month_);
+    void setDay(int day_);
     void setNext(NodeTask *next_);
     void setPrev(NodeTask *prev_);
 

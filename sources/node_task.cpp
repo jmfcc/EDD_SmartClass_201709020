@@ -1,6 +1,6 @@
 #include "../headers/node_task.h"
 
-NodeTask::NodeTask(int id_, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, string hour_, string status_){
+NodeTask::NodeTask(int id_, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_){
     this->id = id_;
     this->cardNumber = cardNumber_;
     this->taskName = taskName_;
@@ -9,6 +9,8 @@ NodeTask::NodeTask(int id_, int cardNumber_, string taskName_, string taskDesc_,
     this->date = date_;
     this->hour = hour_;
     this->status = status_;
+    this->month = month_;
+    this->day = day_;
     this->next = NULL;
     this->prev = NULL;
 }
@@ -32,11 +34,17 @@ string NodeTask::getCourse(){
 string NodeTask::getDate(){
     return this->date;
 }
-string NodeTask::getHour(){
+int NodeTask::getHour(){
     return this->hour;
 }
 string NodeTask::getStatus(){
     return this->status;
+}
+int NodeTask::getMonth(){
+    return this->month;
+}
+int NodeTask::getDay(){
+    return this->day;
 }
 NodeTask *NodeTask::getNext(){
     return this->next;
@@ -64,11 +72,17 @@ void NodeTask::setCourse(string course_){
 void NodeTask::setDate(string date_){
     this->date = date_;
 }
-void NodeTask::setHour(string hour_){
+void NodeTask::setHour(int hour_){
     this->hour = hour_;
 }
 void NodeTask::setStatus(string status_){
     this->status = status_;
+}
+void NodeTask::setMonth(int month_){
+    this->month = month_;
+}
+void NodeTask::setDay(int day_){
+    this->day = day_;
 }
 void NodeTask::setNext(NodeTask *next_){
     this->next = next_;
