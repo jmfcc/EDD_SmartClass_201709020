@@ -376,8 +376,8 @@ void ListStudent::editStudentData(){
 
 void ListStudent::graficar(){
     int limit = this->size;
-    string commandG = "dot -Tpng students.dot -o statusStudents"+to_string(this->generates)+".png";
-    string commandO = "start statusStudents"+to_string(this->generates)+".png";
+    string commandG = "dot -Tpdf students.dot -o statusStudents"+to_string(this->generates)+".pdf";
+    string commandO = "start statusStudents"+to_string(this->generates)+".pdf";
     if (isEmpty()){
         cout<<"\n     --- NO HAY REGISTROS PARA GRAFICAR ---"<<endl;
     }else{
@@ -387,7 +387,7 @@ void ListStudent::graficar(){
         
         file<<"digraph D {\n";
         file<<"\trankdir=LR\n";
-        file<<"\tgraph [dpi = 200];\n";
+        // file<<"\tgraph [dpi = 200];\n";
         file<<"\tnodo_inicio[shape=point];";
         
         NodeStudent *aux = this->head;

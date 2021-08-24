@@ -54,8 +54,8 @@ void Cola::dequeue(){
 }
 void Cola::graficar(){
     int limit = this->size;
-    string commandG = "dot -Tpng errores.dot -o statusErrors"+to_string(this->generates)+".png";
-    string commandO = "start statusErrors"+to_string(this->generates)+".png";
+    string commandG = "dot -Tpdf errores.dot -o statusErrors"+to_string(this->generates)+".pdf";
+    string commandO = "start statusErrors"+to_string(this->generates)+".pdf";
     if (estaVacia()){
         cout<<"\n     --- NO HAY REGISTROS EN COLA DE ERRORES PARA GRAFICAR ---"<<endl;
     }else{
