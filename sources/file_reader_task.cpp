@@ -9,14 +9,18 @@ void readFileTask(string path_, ListTask *tsk){
     bool init = true;
     string indexHeaders = "";
     // string texto[] = new string[5];
+    // int countTest = 1;
     while(getline(myFile, myText)){
         // cout<<myText<<endl;
-        if (init == true){
-            init = false;
-            indexHeaders = setIndexHeadersTask(myText, ",");
-        }else{
-            splitTextTask(myText, ",", indexHeaders, tsk);
-            // cout << " ------------------------" << endl;
+        if (myText != ""){
+            if (init == true){
+                init = false;
+                indexHeaders = setIndexHeadersTask(myText, ",");
+            }else{
+                splitTextTask(myText, ",", indexHeaders, tsk);
+                // cout <<countTest<<" ------------------------" << endl;
+                // countTest++;
+            }
         }
     }
 
@@ -40,10 +44,10 @@ void splitTextTask(string text_, string pattern_, string indx_, ListTask *tsk){
     taskData[count] = text_; //dado que el texto restante no posee el "delimitador" al final, este utlimo texto se almacena fuera del ciclo
     
     //Funcion que castea a enteron un string
-    int listPos[9] = {0,0,0,0,0,0,0,0,0};
-    for (int i = 0; i < 9; i++){
-        listPos[i] = indx_[i]-'0'; // Obtiene el orden de indice para enviar los datos a su parametro correcto
-    }
+    int listPos[9] = {3,4,5,6,7,2,8,0,1};
+    // for (int i = 0; i < 9; i++){
+    //     listPos[i] = indx_[i]-'0'; // Obtiene el orden de indice para enviar los datos a su parametro correcto
+    // }
     
     string msg = "";
 
@@ -84,7 +88,13 @@ void splitTextTask(string text_, string pattern_, string indx_, ListTask *tsk){
     
     if (!validaFecha(taskData[listPos[4]])){
         msg += "\\nLa fecha no es válida";
-        taskData[listPos[6]] = "";
+        taskData[listPos[4]] = "";
+    } else if (!tsk->isTheDateAvaible(stoi(taskData[listPos[7]])-7, stoi(taskData[listPos[8]])-1, stoi(taskData[listPos[5]])-8)){
+        msg += "\\nYa hay una tarea en la misma fecha y hora" + taskData[listPos[4]];
+        taskData[listPos[4]] = "";
+        taskData[listPos[5]] = "0";
+        taskData[listPos[7]] = "0";
+        taskData[listPos[8]] = "0";
     }
 
     if (!validaEstado(taskData[listPos[6]])){
@@ -97,8 +107,11 @@ void splitTextTask(string text_, string pattern_, string indx_, ListTask *tsk){
     // }
 
     if (msg == "") {
+        // int inxTest = (stoi(taskData[listPos[5]])-8) + 9 * ((stoi(taskData[listPos[8]])-1) + 30 * (stoi(taskData[listPos[7]])-7));
+        // cout<<"Normalito - "<<inxTest+1<<endl;
         tsk->insertTaskArray(stoi(taskData[listPos[7]])-7, stoi(taskData[listPos[8]])-1, stoi(taskData[listPos[5]])-8, stoi(taskData[listPos[0]]), taskData[listPos[1]], taskData[listPos[2]], taskData[listPos[3]], taskData[listPos[4]], stoi(taskData[listPos[5]]), taskData[listPos[6]], stoi(taskData[listPos[7]]), stoi(taskData[listPos[8]]));
     } else {
+        // cout<<"Uno se va a errores"<<endl;
         tsk->insertErrorTask(stoi(taskData[listPos[0]]), taskData[listPos[1]], taskData[listPos[2]], taskData[listPos[3]], taskData[listPos[4]], stoi(taskData[listPos[5]]), taskData[listPos[6]], stoi(taskData[listPos[7]]), stoi(taskData[listPos[8]]), msg);
     }
     // Tasks->showListContent();

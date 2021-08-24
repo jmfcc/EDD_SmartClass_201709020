@@ -19,5 +19,7 @@ bool validaEstado(string value_);
 bool validaFecha(string value_);
 //Others
 bool cadenaVacia(string value_);
+string getSeparateDay(string value_);
+string getSeparateMonth(string value_);
 
 #endif

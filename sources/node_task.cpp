@@ -91,6 +91,18 @@ void NodeTask::setPrev(NodeTask *prev_){
     this->prev = prev_;
 }
 
+void NodeTask::clearNodeValues(){
+    this->cardNumber = 0;
+    this->taskName = "";
+    this->taskDesc = "";
+    this->course = "";
+    this->date = "";
+    this->hour = 0;
+    this->status = "";
+    this->month = 0;
+    this->day = 0;
+}
+
 void NodeTask::showInfo(){
     cout<<" "<<endl;
     cout<<"  >> Carnet:    "<<this->cardNumber<<endl;

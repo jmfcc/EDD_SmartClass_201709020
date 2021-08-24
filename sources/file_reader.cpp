@@ -10,12 +10,14 @@ void readFileStudent(string path_, ListStudent *stud){
     // string texto[] = new string[5];
     while(getline(myFile, myText)){
         // cout<<myText<<endl;
-        if (init == true){
-            init = false;
-            indexHeaders = setIndexHeadersStudent(myText, ",");
-        }else{
-            splitTextStudent(myText, ",", indexHeaders, stud);
-            // cout << " ------------------------" << endl;
+        if (myText != ""){
+            if (init == true){
+                init = false;
+                indexHeaders = setIndexHeadersStudent(myText, ",");
+            }else{
+                splitTextStudent(myText, ",", indexHeaders, stud);
+                // cout << " ------------------------" << endl;
+            }
         }
     }
 
@@ -38,10 +40,10 @@ void splitTextStudent(string text_, string pattern_, string indx_, ListStudent *
     studentData[count] = text_; //dado que el texto restante no posee el "delimitador" al final, este utlimo texto se almacena fuera del ciclo
     
     //Funcion que castea a enteron un string
-    int listPos[8] = {0,0,0,0,0,0,0,0};
-    for (int i = 0; i < 8; i++){
-        listPos[i] = indx_[i]-'0'; // Obtiene el orden de indice para enviar los datos a su parametro correcto
-    }
+    int listPos[8] = {0,1,2,3,7,4,5,6};
+    // for (int i = 0; i < 8; i++){
+    //     listPos[i] = indx_[i]-'0'; // Obtiene el orden de indice para enviar los datos a su parametro correcto
+    // }
     string msg = "";
 
     if (!validaNumero(studentData[listPos[0]])){

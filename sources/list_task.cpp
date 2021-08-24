@@ -3,16 +3,38 @@
 ListTask::ListTask(){
     this->size = 0;
     this->head = NULL;
-    for (int i = 0; i<5; i++){
+    for (int i = 0; i<5; i++){ // Llenado de matriz
         for (int j = 0; j<30; j++){
             for (int k = 0; k<9; k++){
                 this->myArrTask[i][j][k] = NULL;
             }
         }
     }
+    for (int m = 0; m<5; m++){ // Llenado de lista doble
+        for (int d = 0; d<30; d++){
+            for (int h = 0; h<9; h++){
+                int indx = h+9*(d+30*m);
+                fillListTask(indx, 0, "", "", "", "", 0, "", 0, 0);
+            }
+        }
+    }
     this->generates = 1;
     this->refError = NULL;
     this->refStud = NULL;
+}
+
+string ListTask::getInputID(){
+    string id_ = "";
+    // bool in = true;
+    do {
+        id_= "";
+        cout<<"   >> Ingresa el ID de la tarea: ";
+        getline(cin, id_);
+        if (id_ == ""){
+            return id_;
+        }
+    } while (!validaNumero(id_));
+    return id_;
 }
 
 void ListTask::setColaRef(Cola *refError_){
@@ -49,23 +71,17 @@ void ListTask::insertRowMajor(){
             for (int h = 0; h<9; h++){
                 int indx = h+9*(d+30*m);
                 if (this->myArrTask[m][d][h] != NULL){
-                    
-                    // MatrixNode aux = *myArrTask[m][d][h];
-                    // MatrixNode *aux-> = myArrTask[m][d][h];
+                    insertTask(indx, myArrTask[m][d][h]->getCardNumber(), myArrTask[m][d][h]->getTaskName(), myArrTask[m][d][h]->getTaskDesc(), myArrTask[m][d][h]->getCourse(), myArrTask[m][d][h]->getDate(), myArrTask[m][d][h]->getHour(), myArrTask[m][d][h]->getStatus(), myArrTask[m][d][h]->getMonth(), myArrTask[m][d][h]->getDay());
 
-                    insertTask(myArrTask[m][d][h]->getCardNumber(), myArrTask[m][d][h]->getTaskName(), myArrTask[m][d][h]->getTaskDesc(), myArrTask[m][d][h]->getCourse(), myArrTask[m][d][h]->getDate(), myArrTask[m][d][h]->getHour(), myArrTask[m][d][h]->getStatus(), myArrTask[m][d][h]->getMonth(), myArrTask[m][d][h]->getDay());
-
-                } else {
-                    insertTask(0, "", "", "", "", 0, "", 0, 0);
                 }
             }
         }
     }
 }
 
-void ListTask::insertTask(int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_){
+void ListTask::fillListTask(int id_, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_){
 
-    int id_ = this->size + 1;
+    // int id_ = this->size + 1;
     
     NodeTask *newNode = new NodeTask(id_, cardNumber_, taskName_, taskDesc_, course_, date_, hour_, status_, month_, day_);
     
@@ -84,9 +100,135 @@ void ListTask::insertTask(int cardNumber_, string taskName_, string taskDesc_, s
     // this->size++;
 }
 
+void ListTask::insertTask(int id_, int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_){
+    
+    NodeTask *aux = this->head;
+
+    while (aux != NULL){
+        if (aux->getID() == id_){
+            break;
+        }
+        aux = aux->getNext();
+    }
+    aux->setCardNumber(cardNumber_);
+    aux->setTaskName(taskName_);
+    aux->setTaskDesc(taskDesc_);
+    aux->setCourse(course_);
+    aux->setDate(date_);
+    aux->setHour(hour_);
+    aux->setStatus(status_);
+    aux->setMonth(month_);
+    aux->setDay(day_);
+}
+
 void ListTask::insertErrorTask(int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_, string infoErr_){
     NodeTask *newNode = new NodeTask(-1, cardNumber_, taskName_, taskDesc_, course_, date_, hour_, status_, month_, day_);
     this->refError->queue(newNode, infoErr_);
+}
+
+void ListTask::insertTaskByConsole(){
+    cout<<"\n  ------ Agregar Tarea -----------"<<endl;
+    cout<<"  Nota: Para cancelar la operacion, deje un campo vacio y presione enter"<<endl;
+    string data[9] = {"", "", "", "", "", "", "", "", ""};
+    bool init = true;
+    int i = 0;
+    while (i < 7) {
+        bool isOk = false;
+        while (!isOk) {
+            switch (i) {
+                case 0:
+                    cout<<"     >> Ingresa el numero de carnet: ";
+                    break;
+                case 1:
+                    cout<<"     >> Ingresa el nombre de la tarea: ";
+                    break;
+                case 2:
+                    cout<<"     >> Ingresa la descripcion: ";
+                    break;
+                case 3:
+                    cout<<"     >> Ingresa el curso: ";
+                    break;
+                case 4:
+                    cout<<"     >> Ingresa la hora (8 - 16): ";
+                    break;
+                case 5:
+                    cout<<"     >> Ingresa la fecha (YYYY/MM/DD): ";
+                    break;
+                case 6:
+                    cout<<"     >> Ingresa el estado: ";
+                    break;
+            }
+            string input = "";
+
+            getline(cin, input);
+            if (input != ""){
+                switch (i) {
+                    case 0: //Carnet
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaLongitud(input, 9)){
+                            cout<<"       --> Error: La longitud del carnet es distinta de la esperada"<<endl;
+                        } else if (!refStud->searchStudentByCardNumber(stoi(input))){
+                            cout<<"       --> Error: El carnet ingresado no esta registrado"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 4:  // Hora
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaHora(stoi(input))){
+                            cout<<"       --> Error: La hora está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 5:  // Fecha
+                        if (!validaFecha(input)){
+                            cout<<"       --> Error: Verifique que la fecha este correcta y se encuentre en el rango permitido"<<endl;
+                        } else {
+
+                            string month_ = getSeparateMonth(input);
+                            string day_ = getSeparateDay(input);
+                            if (!isTheDateAvaible(stoi(month_)-7, stoi(day_)-1, stoi(data[4])-8)){
+                                cout<<"       --> Error: En esta fecha y hora ya esta registrada una tarea"<<endl;
+                                i = 4;
+                            } else {
+                                data[i] = input;
+                                data[7] = month_;
+                                data[8] = day_;
+                                isOk = true;
+                            }
+                        }
+                        break;
+                    case 6:  // Estado
+                        if (!validaEstado(input)){
+                            cout<<"       --> Error: El estado unicamente puede ser, Pendiente-Realizado-Cumplido-Incumplido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    default:  // Name, TaskName, TaskDesc, Course
+                        data[i] = input;
+                        isOk = true;
+                        break;
+                }
+            }else{
+                cout<<"     --> Se ha anulado la operacion"<<endl;
+                return;
+            }
+        }
+        i++;
+    }
+    // int indx = h + 9 * ( d + 30 * m );
+    int indx = (stoi(data[4])-8) + 9 * ((stoi(data[8])-1) + ( 30 * (stoi(data[7])-7)));
+    insertTaskArray(stoi(data[7])-7, stoi(data[8])-1, stoi(data[4])-8, stoi(data[0]), data[1], data[2], data[3], data[5], stoi(data[4]), data[6], stoi(data[7]), stoi(data[8]));
+
+    insertTask(indx, stoi(data[0]), data[1], data[2], data[3], data[5], stoi(data[4]), data[6], stoi(data[7]), stoi(data[8]));
+    cout<<"\n   >> Se ha guardado el registro"<<endl;
 }
 
 void ListTask::showListContent(){
@@ -127,8 +269,52 @@ void ListTask::showMatrixContent(){
     }
 }
 
-void ListTask::deleteTask(int id_){
-    //Not implemented
+void ListTask::deleteTask(){
+    string sid_ = getInputID();
+    if (sid_ == ""){
+        cout<<"    --> Se ha cancelado la operación"<<endl;
+        return;
+    }
+    
+    int id_ = stoi(sid_) - 1;
+    if (id_ < 0 || id_ > 1349){
+        cout<<"    --> Error: ID fuera de rango"<<endl;
+        return;
+    }
+
+    NodeTask *aux = this->head;
+    while(aux != NULL){
+        if (aux->getID() == id_){
+            if (aux->getCardNumber() != 0){
+                string confirm = "";
+                cout<<"    >> Aviso: Esta seguro que desea eliminar la tarea (Y/N)?: ";
+                getline(cin, confirm);
+                if (confirm == "Y" || confirm == "y"){
+                    deleteTaskArray(aux->getMonth(), aux->getDay(), aux->getHour());
+                    aux->clearNodeValues();
+                }  else {
+                    cout<<"     --> Se ha anulado la operacion"<<endl;
+                }
+            } else {
+                cout<<"     --> Error: La tarea seleccionada no existe"<<endl;
+            }
+        }
+        aux = aux->getNext();
+    }
+}
+
+void ListTask::deleteTaskArray(int indxM, int indxD, int indxH){
+    myArrTask[indxM-7][indxD-1][indxH-8] = NULL;
+}
+
+void ListTask::editTaskData(){
+    string sid_ = getInputID();
+    if (sid_ == ""){
+        cout<<"    --> Se ha cancelado la operación"<<endl;
+        return;
+    }
+    
+    int id_ = stoi(sid_) - 1;
 }
 
 void ListTask::searchTask(string cardNumber_, int id_){
@@ -158,15 +344,14 @@ void ListTask::graficar(){
         
         file<<"digraph D {\n";
         file<<"\trankdir=LR\n";
-        file<<"\tgraph [dpi = 300];\n";
-        // file<<"\tnodo_inicio[shape=point];";
-        // file<<"\tnodo_null1[shape=none,label=\"NULL\"]\n";
+        file<<"\tgraph [dpi = 200];\n";
+        file<<"\tedge[dir=both];\n";
         
         NodeTask *aux = this->head;
         int count = 0;
 
         while (aux != NULL) {
-            string formatInfo = "ID: " + to_string(aux->getID());
+            string formatInfo = "ID: " + to_string(aux->getID()+1);
             if (aux->getCardNumber() != 0){
                 formatInfo += "\\nCarnet: " + to_string(aux->getCardNumber())
                 + "\\nNombre Tarea: " + aux->getTaskName()
@@ -195,7 +380,7 @@ void ListTask::graficar(){
                 } else {
                     nodeNumb = ((colCount+1)*27)-(1+i);
                 }
-                file<<"n"<<nodeNumb<<";\n";
+                file<<"\t\tn"<<nodeNumb<<";\n";
                 colCount++;
             }
 
@@ -217,27 +402,39 @@ void ListTask::graficar(){
         nNode--;
         for (int i = 675; i < 1350; i++){
             if (init){
-                file<<"\n\tn"<<nNode<<"";
+                file<<";\n\tn"<<nNode<<"";
                 init = false;
             } else {
                 file<<"->n"<<nNode;
             }
             nNode++;
         }
-        // while (nNode > 0){
-        //     if (init){
-        //         file<<"\tn"<<nNode<<"";
-        //         init = false;
-        //     } else {
-        //         file<<"->n"<<nNode;
-        //     }
-        //     nNode--;
-        // }
 
-        // file<<"\tnodo_"<<limit-1<<":f1:n";
-        // file<<"->nodo_null2:n\n";
+        nNode--;
+        init = true;
+        while (nNode >= 675){
+            if (init){
+                file<<";\n\tn"<<nNode<<"";
+                init = false;
+            } else {
+                file<<"->n"<<nNode;
+            }
+            nNode--;
+        }
+        nNode++;
+        init = true;
+        while (nNode >= 0){
+            if (init){
+                file<<";\n\tn"<<nNode<<"";
+                init = false;
+            } else {
+                file<<"->n"<<nNode;
+            }
+            nNode--;
+        }
 
-        file<<"}\n";
+
+        file<<"\n}\n";
         file.close();
         
         system(commandG.c_str());

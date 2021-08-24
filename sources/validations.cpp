@@ -12,7 +12,8 @@ bool validaNumero(string value_){
     return true;
 }
 bool validaCorreo(string value_){
-    return regex_match(value_, regex("[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9]+(\\.[a-z0-9]+)*\\.(com|es|org)"));
+    return regex_match(value_, regex("(\\w+)(\\.|_)?(\\w*)@(\\w+)(\\.(\\w+))+"));
+    // return regex_match(value_, regex("[a-z0-9_]+(\\.[a-z0-9_]+)*@[a-z0-9_]+(\\.[a-z0-9_]+)*\\.(com|es|org)"));
 }
 bool cadenaVacia(string value_){
     bool empty = true;
@@ -81,4 +82,39 @@ bool validaFecha(string value_){
         return false;
     }
     return true;
+}
+
+string getSeparateDay(string value_){
+    string dateF[3] = {"", "", ""};
+    string token = "";
+    int count = 0;
+    for (int i = 0; i < value_.length(); i++){
+        if (value_[i] != '/'){
+            token += value_[i];
+        } else {
+            dateF[count] = token;
+            token = "";
+            count++;
+        }
+    }
+    dateF[count] = token;
+
+    return dateF[2]; //Day
+}
+string getSeparateMonth(string value_){
+    string dateF[3] = {"", "", ""};
+    string token = "";
+    int count = 0;
+    for (int i = 0; i < value_.length(); i++){
+        if (value_[i] != '/'){
+            token += value_[i];
+        } else {
+            dateF[count] = token;
+            token = "";
+            count++;
+        }
+    }
+    dateF[count] = token;
+
+    return dateF[1]; //Month
 }

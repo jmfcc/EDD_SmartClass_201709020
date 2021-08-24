@@ -8,7 +8,7 @@
 #include "../headers/validations.h"
 using namespace std;
 
-//                                0        1          2           3         4      5       6       7      8
+//                                3        4          5           6         7      2       8       0      1
 static string TaskFormat[9] = {"Carnet","Nombre","Descripcion","Materia","Fecha","Hora","Estado","Mes", "Dia"};
 
 void readFileTask(string path_, ListTask *task_);

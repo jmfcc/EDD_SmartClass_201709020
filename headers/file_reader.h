@@ -7,7 +7,7 @@
 #include "../headers/list_student.h"
 #include "../headers/validations.h"
 using namespace std;
-//                                   0       1      2         3        4         5           6        7
+//                                   0       1      2         3        7         4           5        6
 static string studentFormat[8] = {"Carnet","DPI","Nombre","Carrera","Correo","Password","Creditos","Edad"};
 
 void readFileStudent(string path_, ListStudent *stud);

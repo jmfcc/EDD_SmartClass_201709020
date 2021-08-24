@@ -51,6 +51,8 @@ public:
     void setNext(NodeTask *next_);
     void setPrev(NodeTask *prev_);
 
+    void clearNodeValues();
+
     void showInfo();
 };
 

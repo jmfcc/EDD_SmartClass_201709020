@@ -10,14 +10,14 @@ ListStudent::ListStudent(){
 string ListStudent::getInputDPI(){
     string dpi_ = "";
     do {
-        dpi_= "";
+        // dpi_= "";
         cout<<"   >> Ingresa el numero de DPI del estudiante: ";
         getline(cin, dpi_);
         if (dpi_ == ""){
-            cout<<"   >> Ingresa un numero de DPI valido"<<endl;
-            dpi_ = "x";
+            // cout<<"     --> Se ha anulado la operación"<<endl;
+            return dpi_;
         }
-    } while (!validaLongitud(dpi_, 13) && !validaNumero(dpi_));
+    } while (!validaLongitud(dpi_, 13) || !validaNumero(dpi_));
     
     return dpi_;
 }
@@ -84,6 +84,10 @@ void ListStudent::showListContent(){
 
 void ListStudent::deleteStudent(){
     string dpi_ = getInputDPI();
+    if (dpi_ == ""){
+        cout<<"    --> Se ha cancelado la operación"<<endl;
+        return;
+    }
 
     if (searchStudentByDPI(dpi_)){
         NodeStudent *aux = this->head;
@@ -117,7 +121,6 @@ void ListStudent::deleteStudent(){
     } else {
         cout<<"   >> Error: No hubo coincidencia del DPI ingresado"<<endl;
     }
-
 }
 
 bool ListStudent::searchStudentByDPI(string dpi_){
@@ -254,6 +257,10 @@ void ListStudent::insertStudentByConsole(){
 
 void ListStudent::editStudentData(){
     string dpi_ = getInputDPI();
+    if (dpi_ == ""){
+        cout<<"    --> Se ha cancelado la operacion"<<endl;
+        return;
+    }
 
     if (searchStudentByDPI(dpi_)){
         NodeStudent *aux = this->head;
@@ -380,7 +387,7 @@ void ListStudent::graficar(){
         
         file<<"digraph D {\n";
         file<<"\trankdir=LR\n";
-        file<<"\tgraph [dpi = 300];\n";
+        file<<"\tgraph [dpi = 200];\n";
         file<<"\tnodo_inicio[shape=point];";
         
         NodeStudent *aux = this->head;
@@ -418,8 +425,8 @@ void ListStudent::graficar(){
             file<<"\tnodo_"<<limit-1<<":f1:n";
             file<<"->nodo_0:f0:n\n";
 
-            file<<"\tnodo_0:f0:s\n";
-            file<<"->nodo_"<<limit-1<<":f1:s";
+            file<<"\tnodo_0:f0:s";
+            file<<"->nodo_"<<limit-1<<":f1:s\n";
         }
         file<<"}\n";
         file.close();

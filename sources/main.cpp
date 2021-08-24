@@ -17,7 +17,6 @@ ListStudent *students = new ListStudent();
 void menu();
 void mySwitch(int);
 int getIntegerInput();
-void fillMatrixTask(string param_);
 string getExistFileURLInput();
 
 int main(){
@@ -26,19 +25,6 @@ int main(){
     tasks->setStudentRef(students);
 
     // SetConsoleOutputCP(CP_UTF8);
-    
-    // tasks->insertTask(201709020, "Tarea de matematica", "Primer tarea unidad 1", "Matematica Aplicada 1", "2021/08/11", "23", "Pendiente");
-
-    // tasks->showListContent();
-
-    // string inputUser;
-    // // cin.ignore(); // 
-    // getline(cin, inputUser);  // input de una cadena con espacios
-    // // cin >> inputUser;      // Input de una cadena sin espacios
-    // cout << inputUser << endl;
-
-    // system("pause");
-
     menu();
 
     return 0;
@@ -49,8 +35,8 @@ void menu(){
         cout<<"\n-------------------------------------------------------"<<endl;
         cout<<"-------------- S M A R T - C L A S S ------------------"<<endl;
         cout<<"-------------------------------------------------------"<<endl<<endl;
-        cout<<"  [1] Cargar masiva - Usuarios\n";
-        cout<<"  [2] Cargar masiva - Tareas\n"; 
+        cout<<"  [1] Cargar archivo - Usuarios\n";
+        cout<<"  [2] Cargar archivo - Tareas\n"; 
         cout<<"  [3] Operaciones Manuales (Usuarios)\n";
         cout<<"  [4] Operaciones Manuales (Tareas)\n";
         cout<<"  [5] Reportes\n  [6] Salir\n"<<endl;
@@ -100,8 +86,6 @@ void mySwitch(int opcion){
             param01 = getExistFileURLInput();
             if (param01 != ""){
                 readFileTask(param01, tasks);
-                // tasks->insertRowMajor();
-                // fillMatrixTask(param01);
             }
             break;
         case 3: // Ingreso Manual - Usuarios
@@ -112,10 +96,10 @@ void mySwitch(int opcion){
             do {
                 cout<<"     >> Ingresa una opcion: ";
                 opt = getIntegerInput();
-                if (opt < 1 && opt > 4){
-                    cout<<"      --> Error: Debe elegir un numero de opcion correcta";
+                if (opt < 1 || opt > 4){
+                    cout<<"      --> Error: Debe elegir un numero de opcion correcta"<<endl;
                 }
-            } while (opt < 1 && opt > 4);
+            } while (opt < 1 || opt > 4);
             
             if (opt == 1){
                 students->insertStudentByConsole();
@@ -126,6 +110,25 @@ void mySwitch(int opcion){
             }
             break;
         case 4: // Ingreso Manual - Tareas
+            cout<<"     1 - Agregar una nueva tarea"<<endl;
+            cout<<"     2 - Editar tarea"<<endl;
+            cout<<"     3 - Eliminar tarea"<<endl;
+            cout<<"     4 - Regresar al menu principal"<<endl;
+            do {
+                cout<<"     >> Ingresa una opcion: ";
+                opt = getIntegerInput();
+                if (opt < 1 || opt > 4){
+                    cout<<"      --> Error: Debe elegir un numero de opcion correcta"<<endl;;
+                }
+            } while (opt < 1 || opt > 4);
+            
+            if (opt == 1){
+                tasks->insertTaskByConsole();
+            } else if (opt == 2){
+                tasks->editTaskData();
+            } else if (opt == 3){
+                tasks->deleteTask();
+            }
             break;
         case 5:
             // students->showListContent();
@@ -140,19 +143,18 @@ void mySwitch(int opcion){
 int getIntegerInput(){
     int value = -1;
     string valueInput;
-    try {
-        // cin.ignore();
-        getline(cin, valueInput);
+    // cin.ignore();
+    getline(cin, valueInput);
+    if (valueInput == ""){
+        return value;
+    }else{
         for (int i = 0; i < valueInput.length(); i++){
             if (!isdigit(valueInput[i])){
                 return value;
             }
         }
-        value = std::stoi(valueInput);        
     }
-    catch(const std::exception& e) {
-        std::cerr << e.what() << '\n';
-    }
+    value = std::stoi(valueInput);        
     return value;
 }
 
@@ -176,19 +178,4 @@ string getExistFileURLInput(){
     catch(const std::exception& e) {
         std::cerr << e.what() << '\n';
     }
-}
-
-void fillMatrixTask(string param_){
-    MatrixNode *myArrTask[5][30][9]; // Array
-    
-    for (int i = 0; i<5; i++){
-        for (int j = 0; j<30; j++){
-            for (int k = 0; k<9; k++){
-                myArrTask[i][j][k] = NULL;
-            }
-        }
-    }
-
-    // readFileTask(param_, myArrTask, tasks);
-    tasks->insertRowMajor();
 }
