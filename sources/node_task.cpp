@@ -105,9 +105,13 @@ void NodeTask::clearNodeValues(){
 
 void NodeTask::showInfo(){
     cout<<" "<<endl;
-    cout<<"  >> Carnet:    "<<this->cardNumber<<endl;
-    cout<<"  >> ID - Task: "<<this->id<<endl;
-    cout<<"  >> Course: "<<this->course<<endl;
-    cout<<"  >> Task Name: "<<this->taskName<<endl;
+    cout<<"    :> ID - Task:  "<<this->id<<endl;
+    cout<<"    :> Carnet:     "<<this->cardNumber<<endl;
+    cout<<"    :> Course:     "<<this->course<<endl;
+    cout<<"    :> Task Name:  "<<this->taskName<<endl;
+    cout<<"    :> Task Desc.: "<<this->taskDesc<<endl;
+    cout<<"    :> Date:       "<<this->date<<endl;
+    cout<<"    :> Hour:       "<<this->date<<":00"<<endl;
+    cout<<"    :> Status:     "<<this->status<<endl;
     cout<<" "<<endl;
 }
