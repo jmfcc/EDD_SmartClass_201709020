@@ -45,6 +45,8 @@ public:
 
     void editTaskData();
     //Existence validations
+    void reportTask();
+    void calculatePosition();
     void searchTask(string cardNumber_, int id_);
     bool isTheDateAvaible(int indxM, int indxD, int indxH);
 

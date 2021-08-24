@@ -317,6 +317,157 @@ void ListTask::editTaskData(){
     int id_ = stoi(sid_) - 1;
 }
 
+void ListTask::reportTask(){
+    cout<<"\n  ------ Busqueda de Tarea -----------"<<endl;
+    cout<<"  Nota: Para cancelar la operacion, deje un campo vacio y presione enter"<<endl;
+    string data[3] = {"", "", ""};
+    bool init = true;
+    int i = 0;
+    while (i < 3) {
+        bool isOk = false;
+        while (!isOk) {
+            switch (i) {
+                case 0:
+                    cout<<"     >> Ingresa el mes (7 - 11): ";
+                    break;
+                case 1:
+                    cout<<"     >> Ingresa el dia (1 - 30): ";
+                    break;
+                case 2:
+                    cout<<"     >> Ingresa la hora (8 - 16): ";
+                    break;
+            }
+            string input = "";
+
+            getline(cin, input);
+            if (input != ""){
+                switch (i) {
+                    case 0: //Mes
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaMes(stoi(input))){
+                            cout<<"       --> Error: El mes está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 1:  // Dia
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaDia(stoi(input))){
+                            cout<<"       --> Error: El dia está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 2:  // Hora
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaHora(stoi(input))){
+                            cout<<"       --> Error: La hora está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                }
+            }else{
+                cout<<"     --> Se ha anulado la operacion"<<endl;
+                return;
+            }
+        }
+        i++;
+    }
+    int index = (stoi(data[2])-8) + 9 * ( (stoi(data[1])-1) + 30 * (stoi(data[0])-7) );
+    
+    NodeTask *aux = this->head;
+    bool isFind = false;
+    while (aux != NULL){
+        if (aux->getID() == index){
+            if (aux->getCardNumber() != 0){
+                isFind = true;
+            }
+            break;
+        }
+        aux = aux->getNext();
+    }
+    if (isFind){
+        aux->showInfo();
+    } else {
+        cout<<"  ----- NO HAY TAREAS EN ESTA FECHA ------"<<endl;
+    }
+}
+
+void ListTask::calculatePosition(){
+    cout<<"\n  ------ Calcular indice de Tarea -----------"<<endl;
+    cout<<"  Nota: Para cancelar la operacion, deje un campo vacio y presione enter"<<endl;
+    string data[3] = {"", "", ""};
+    bool init = true;
+    int i = 0;
+    while (i < 3) {
+        bool isOk = false;
+        while (!isOk) {
+            switch (i) {
+                case 0:
+                    cout<<"     >> Ingresa el mes (7 - 11): ";
+                    break;
+                case 1:
+                    cout<<"     >> Ingresa el dia (1 - 30): ";
+                    break;
+                case 2:
+                    cout<<"     >> Ingresa la hora (8 - 16): ";
+                    break;
+            }
+            string input = "";
+
+            getline(cin, input);
+            if (input != ""){
+                switch (i) {
+                    case 0: //Mes
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaMes(stoi(input))){
+                            cout<<"       --> Error: El mes está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 1:  // Dia
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaDia(stoi(input))){
+                            cout<<"       --> Error: El dia está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                    case 2:  // Hora
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaHora(stoi(input))){
+                            cout<<"       --> Error: La hora está fuera del rango permitido"<<endl;
+                        } else {
+                            data[i] = input;
+                            isOk = true;
+                        }
+                        break;
+                }
+            }else{
+                cout<<"     --> Se ha anulado la operacion"<<endl;
+                return;
+            }
+        }
+        i++;
+    }
+    int index = (stoi(data[2])-8) + 9 * ( (stoi(data[1])-1) + 30 * (stoi(data[0])-7) );
+    cout<<"   :: Indice resultante (codigo interno): "<<index<<endl;
+    cout<<"   :: Indice resultante (ID): "<<index+1<<endl;
+}
+
 void ListTask::searchTask(string cardNumber_, int id_){
     //Not implemented
 }
