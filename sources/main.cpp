@@ -131,11 +131,34 @@ void mySwitch(int opcion){
             }
             break;
         case 5:
-            // students->showListContent();
-            students->graficar();
-            errors->graficar();
+            cout<<"\n     1 - Reporte lista estudiantes"<<endl;
+            cout<<"     2 - Reporte lista tareas (linealizada)"<<endl;
+            cout<<"     3 - Busqueda de tarea"<<endl;
+            cout<<"     4 - Calculo de posicion"<<endl;
+            cout<<"     5 - Cola de errores"<<endl;
+            cout<<"     6 - Generar codigo de salida"<<endl;
+            do {
+                cout<<"     >> Ingresa una opcion: ";
+                opt = getIntegerInput();
+                if (opt < 1 || opt > 6){
+                    cout<<"      --> Error: Debe elegir un numero de opcion correcta"<<endl;;
+                }
+            } while (opt < 1 || opt > 4);
+            
+            if (opt == 1){
+                students->graficar();
+            } else if (opt == 2){
+                tasks->graficar();
+            } else if (opt == 3){
+                tasks->reportTask();
+            } else if (opt == 4){
+                tasks->calculatePosition();
+            } else if (opt == 5){
+                errors->graficar();
+            } else if (opt == 6){
+                // Not implemented
+            }
             // tasks->showMatrixContent();
-            tasks->graficar();
             break;
     }
 }
