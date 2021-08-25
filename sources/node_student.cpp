@@ -79,9 +79,14 @@ void NodeStudent::setPrev(NodeStudent *prev_){
 };
 
 void NodeStudent::showInfo(){
-    cout<<" "<<endl;
-    cout<<"  >> Nombre:  "<<this->name<<endl;
-    cout<<"  >> Carrera: "<<this->career<<endl;
-    cout<<"  >> Carnet:  "<<this->cardNumber<<endl;
+    cout<<"\n     ----  INFORMACION - ESTUDIANTE --------"<<endl;
+    cout<<"     :> Carnet:      "<<this->cardNumber<<endl;
+    cout<<"     :> DPI:         "<<this->dpi<<endl;
+    cout<<"     :> Nombre:      "<<this->name<<endl;
+    cout<<"     :> Carrera:     "<<this->career<<endl;
+    cout<<"     :> Correo:      "<<this->email<<endl;
+    cout<<"     :> Contrasenia: "<<this->password<<endl;
+    cout<<"     :> Creditos:    "<<this->credits<<endl;
+    cout<<"     :> Edad:        "<<this->age<<endl;
     cout<<" "<<endl;
 }
