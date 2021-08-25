@@ -50,61 +50,70 @@ void splitTextTask(string text_, string pattern_, string indx_, ListTask *tsk){
     // }
     
     string msg = "";
+    string msgConsole = "";
 
     if (!validaNumero(taskData[listPos[0]])){
-        msg += "\\nEl carnet posee valores no numericos";
-        taskData[listPos[0]] = "0";
+        msg += "\\nEl carnet posee valores no numericos ("+taskData[listPos[0]]+")";
+        msgConsole += "\nEl carnet posee valores no numericos ("+taskData[listPos[0]]+")";
+        // taskData[listPos[0]] = "0";
     } else if (!validaLongitud(taskData[listPos[0]], 9)){
-        msg += "\\nEl carnet no tiene la cantidad de digitos esperados";
-        taskData[listPos[0]] = "0";
+        msg += "\\nEl carnet no tiene la cantidad de digitos esperados ("+taskData[listPos[0]]+")";
+        msgConsole += "\nEl carnet no tiene la cantidad de digitos esperados ("+taskData[listPos[0]]+")";
+        // taskData[listPos[0]] = "0";
     } else if (!tsk->existCardNumber(stoi(taskData[listPos[0]]))){
-        msg += "\\nEl carnet no está registrado";
-        taskData[listPos[0]] = "0";
+        msg += "\\nEl carnet no está registrado ("+taskData[listPos[0]]+")";
+        msgConsole += "\nEl carnet no está registrado ("+taskData[listPos[0]]+")";
+        // taskData[listPos[0]] = "0";
     }
 
     if (!validaNumero(taskData[listPos[5]])){
-        msg += "\\nError de hora, se esperaba un valor numerico";
-        taskData[listPos[5]] = "0";
+        msg += "\\nError de hora, se esperaba un valor numerico ("+taskData[listPos[5]]+")";
+        msgConsole += "\nError de hora, se esperaba un valor numerico ("+taskData[listPos[5]]+")";
+        // taskData[listPos[5]] = "0";
     } else if (!validaHora(stoi(taskData[listPos[5]]))){
-        msg += "\\nLa hora esta fuera del horario permitido";
-        taskData[listPos[5]] = "0";
+        msg += "\\nLa hora esta fuera del horario permitido ("+taskData[listPos[5]]+")";
+        msgConsole += "\nLa hora esta fuera del horario permitido ("+taskData[listPos[5]]+")";
+        // taskData[listPos[5]] = "0";
     }
 
     if (!validaNumero(taskData[listPos[7]])){
-        msg += "\\nError de mes, se esperaba un valor numerico";
-        taskData[listPos[7]] = "0";
+        msg += "\\nError de mes, se esperaba un valor numerico ("+taskData[listPos[7]]+")";
+        msgConsole += "\nError de mes, se esperaba un valor numerico ("+taskData[listPos[7]]+")";
+        // taskData[listPos[7]] = "0";
     } else if (!validaMes(stoi(taskData[listPos[7]]))){
-        msg += "\\nEl mes se encuentra fuera del rango permitido";
-        taskData[listPos[7]] = "0";
+        msg += "\\nEl mes se encuentra fuera del rango permitido ("+taskData[listPos[7]]+")";
+        msgConsole += "\nEl mes se encuentra fuera del rango permitido ("+taskData[listPos[7]]+")";
+        // taskData[listPos[7]] = "0";
     }
 
     if (!validaNumero(taskData[listPos[8]])){
-        msg += "\\nError de dia, se esperaba un valor numerico";
-        taskData[listPos[8]] = "0";
+        msg += "\\nError de dia, se esperaba un valor numerico ("+taskData[listPos[8]]+")";
+        msgConsole += "\nError de dia, se esperaba un valor numerico ("+taskData[listPos[8]]+")";
+        // taskData[listPos[8]] = "0";
     } else if (!validaDia(stoi(taskData[listPos[8]]))){
-        msg += "\\nEl dia se encuentra fuera del rango permitido";
-        taskData[listPos[8]] = "0";
+        msg += "\\nEl dia se encuentra fuera del rango permitido ("+taskData[listPos[8]]+")";
+        msgConsole += "\nEl dia se encuentra fuera del rango permitido ("+taskData[listPos[8]]+")";
+        // taskData[listPos[8]] = "0";
     }
     
     if (!validaFecha(taskData[listPos[4]])){
-        msg += "\\nLa fecha no es válida";
-        taskData[listPos[4]] = "";
+        msg += "\\nLa fecha no es válida ("+taskData[listPos[4]]+")";
+        msgConsole += "\nLa fecha no es válida ("+taskData[listPos[4]]+")";
+        // taskData[listPos[4]] = "";
     } else if (!tsk->isTheDateAvaible(stoi(taskData[listPos[7]])-7, stoi(taskData[listPos[8]])-1, stoi(taskData[listPos[5]])-8)){
-        msg += "\\nYa hay una tarea en la misma fecha y hora" + taskData[listPos[4]];
-        taskData[listPos[4]] = "";
-        taskData[listPos[5]] = "0";
-        taskData[listPos[7]] = "0";
-        taskData[listPos[8]] = "0";
+        msg += "\\nYa hay una tarea en la misma fecha y hora ("+taskData[listPos[4]]+" "+taskData[listPos[5]]+":00)";
+        msgConsole += "\nYa hay una tarea en la misma fecha y hora ("+taskData[listPos[4]]+" "+taskData[listPos[5]]+":00)";
+        // taskData[listPos[4]] = "";
+        // taskData[listPos[5]] = "0";
+        // taskData[listPos[7]] = "0";
+        // taskData[listPos[8]] = "0";
     }
 
     if (!validaEstado(taskData[listPos[6]])){
-        msg += "\\nEl estado no es valido";
-        taskData[listPos[6]] = "";
+        msg += "\\nEl estado no es valido ("+taskData[listPos[6]]+")";
+        msgConsole += "\nEl estado no es valido ("+taskData[listPos[6]]+")";
+        // taskData[listPos[6]] = "";
     }
-    // if (!validaCorreo(taskData[listPos[4]])){
-    //     msg += "\nEl correo posee un formato incorrecto";
-    //     taskData[listPos[4]] = "";
-    // }
 
     if (msg == "") {
         // int inxTest = (stoi(taskData[listPos[5]])-8) + 9 * ((stoi(taskData[listPos[8]])-1) + 30 * (stoi(taskData[listPos[7]])-7));
