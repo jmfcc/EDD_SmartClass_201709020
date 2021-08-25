@@ -49,41 +49,41 @@ void splitTextStudent(string text_, string pattern_, string indx_, ListStudent *
 
     if (!validaNumero(studentData[listPos[0]])){
         msg += "\\nEl carnet posee valores no numericos ("+studentData[listPos[0]]+")";
-        msgConsole += "\nEl carnet posee valores no numericos ("+studentData[listPos[0]]+")";
-        // studentData[listPos[0]] = "0";
+        msgConsole += "\n\t\tEl carnet posee valores no numericos ("+studentData[listPos[0]]+")";
+        studentData[listPos[0]] = "0";
     } else if (!validaLongitud(studentData[listPos[0]], 9)){
         msg += "\\nEl carnet no tiene la cantidad de digitos esperados ("+studentData[listPos[0]]+")";
-        msgConsole += "\nEl carnet no tiene la cantidad de digitos esperados ("+studentData[listPos[0]]+")";
+        msgConsole += "\n\t\tEl carnet no tiene la cantidad de digitos esperados ("+studentData[listPos[0]]+")";
         // studentData[listPos[0]] = "0";
     } else if (stud->searchStudentByCardNumber(std::stoi(studentData[listPos[0]]))){
         msg += "\\nEl carnet ya está registrado ("+studentData[listPos[0]]+")";
-        msgConsole += "\\nEl carnet ya está registrado ("+studentData[listPos[0]]+")";
+        msgConsole += "\n\t\tEl carnet ya está registrado ("+studentData[listPos[0]]+")";
         // studentData[listPos[0]] = "0";
     }
 
     if (!validaNumero(studentData[listPos[1]])){
         msg += "\\nEl dpi posee valores no numericos ("+studentData[listPos[1]]+")";
-        msgConsole += "\nEl dpi posee valores no numericos ("+studentData[listPos[1]]+")";
-        // studentData[listPos[1]] = "0";
+        msgConsole += "\n\t\tEl dpi posee valores no numericos ("+studentData[listPos[1]]+")";
+        studentData[listPos[1]] = "0";
     } else if (!validaLongitud(studentData[listPos[1]],13)){
         msg += "\\nEl dpi no tiene la cantidad de digitos esperados ("+studentData[listPos[1]]+")";
-        msgConsole += "\nEl dpi no tiene la cantidad de digitos esperados ("+studentData[listPos[1]]+")";
+        msgConsole += "\n\t\tEl dpi no tiene la cantidad de digitos esperados ("+studentData[listPos[1]]+")";
         // studentData[listPos[1]] = "0";
     } else if (stud->searchStudentByDPI(studentData[listPos[1]])){
         msg += "\\nEl dpi ya esta registrado ("+studentData[listPos[1]]+")";
-        msgConsole += "\nEl dpi ya esta registrado ("+studentData[listPos[1]]+")";
+        msgConsole += "\n\t\tEl dpi ya esta registrado ("+studentData[listPos[1]]+")";
         // studentData[listPos[1]] = "0";
     }
     
     if (!validaCorreo(studentData[listPos[4]])){
         msg += "\\nEl correo posee un formato incorrecto ("+studentData[listPos[4]]+")";
-        msgConsole += "\nEl correo posee un formato incorrecto ("+studentData[listPos[4]]+")";
+        msgConsole += "\n\t\tEl correo posee un formato incorrecto ("+studentData[listPos[4]]+")";
         // studentData[listPos[4]] = "";
     }
     if (msg == "") {
         stud->insertStudent(std::stoi(studentData[listPos[0]]), studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]));
     } else {
-        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg);
+        stud->insertErrorStudent(std::stoi(studentData[listPos[0]]), studentData[listPos[1]], studentData[listPos[2]], studentData[listPos[3]], studentData[listPos[4]], studentData[listPos[5]], std::stoi(studentData[listPos[6]]), std::stoi(studentData[listPos[7]]), msg, msgConsole);
     }
     // students->showListContent();
     // system("pause");

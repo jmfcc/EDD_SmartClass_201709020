@@ -6,7 +6,7 @@
 #include <fstream>
 #include "../headers/list_task.h"
 #include "../headers/validations.h"
-using namespace std;
+// using namespace std;
 
 //                                3        4          5           6         7      2       8       0      1
 static string TaskFormat[9] = {"Carnet","Nombre","Descripcion","Materia","Fecha","Hora","Estado","Mes", "Dia"};
