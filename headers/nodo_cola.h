@@ -6,25 +6,27 @@
 #include "node_student.h"
 #include "node_task.h"
 
-using namespace std;
+// using namespace std;
 
 class NodoCola{
 private:
     int idErr;
     string type; //Student or task
     string infoErr;
+    string infoErr_console;
     NodeStudent *errStudent;
     NodeTask *errTask;
 
     NodoCola *anterior;
 
 public:
-    NodoCola(NodeStudent *errStudent_, string infoErr_, int idErr_);
-    NodoCola(NodeTask *errTask_, string infoErr_, int idErr_);
+    NodoCola(NodeStudent *errStudent_, string infoErr_, int idErr_, string infoErr_console_);
+    NodoCola(NodeTask *errTask_, string infoErr_, int idErr_, string infoErr_console_);
 
     int getIDErr();
     string getType();
     string getInfoErr();
+    string getInfoErrConsole();
     NodeStudent *getErrStudent();
     NodeTask *getErrTask();
 
@@ -33,6 +35,7 @@ public:
     void setIDErr(int idErr_);
     void setType(string type_);
     void setInfoErr(string infoErr_);
+    void setInfoErrConsole(string infoErr_console_);
     void setErrStudent(NodeStudent *errStudent_);
     void setErrTask(NodeTask *errTask_);
     
