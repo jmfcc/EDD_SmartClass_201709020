@@ -374,6 +374,9 @@ void ListTask::editTaskData(){
                 option = "x";
             } else if (!validaNumero(option)){
                 cout<<"     --> Error: La opcion debe ser numerica"<<endl;
+            } else if (!validaLongitud(option, 1)){
+                cout<<"     --> Error: Opcion invalida"<<endl;
+                option += "error";
             } else if (stoi(option) > 8 || stoi(option) < 1){
                 cout<<"     --> Error: La opcion debe ser del rango de 1-8"<<endl;
                 option += "error";

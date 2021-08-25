@@ -367,7 +367,7 @@ void fixTask(NodoCola *toFix_){
         toFix_->showInfo();
         cout<<"\n  --------- Editar Tarea -----------"<<endl;
         cout<<"   Nota: Para cancelar una modificacion, deje el campo vacio y presione enter"<<endl;
-        cout<<"\n         -- ID :                 "<<aux->getID()<<endl;
+        // cout<<"\n         -- ID :                 "<<aux->getID()<<endl;
         cout<<"   1 - Carnet (Actual):          "<<aux->getCardNumber()<<endl;
         cout<<"   2 - Nombre de tarea (Actual): "<<aux->getTaskName()<<endl;
         cout<<"   3 - Descripcion (Actual):     "<<aux->getTaskDesc()<<endl;

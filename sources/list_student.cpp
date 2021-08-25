@@ -154,6 +154,7 @@ void ListStudent::insertStudentByConsole(){
     cout<<"\n  ------ Agregar Estudiante -----------"<<endl;
     cout<<"  Nota: Para cancelar la operacion, deje un campo vacio y presione enter"<<endl;
     string data[8] = {"", "", "", "", "", "", "", ""};
+    string input = "";
     bool init = true;
     for (int i=0; i<8; i++){
         bool isOk = false;
@@ -184,7 +185,7 @@ void ListStudent::insertStudentByConsole(){
                     cout<<"     >> Ingresa la edad: ";
                     break;
             }
-            string input = "";
+            input = "";
             // if (init){
             //     cin.ignore();
             //     init = false;
@@ -269,6 +270,7 @@ void ListStudent::editStudentData(){
         }
         bool edit = true;
         string option = "";
+        string input = "";
         while (edit) {
             cout<<"\n  --------- Editar Estudiante -----------"<<endl;
             cout<<"   Nota: Para cancelar una modificacion, deje el campo vacio y presione enter"<<endl;
@@ -291,6 +293,9 @@ void ListStudent::editStudentData(){
                     option = "x";
                 } else if (!validaNumero(option)){
                     cout<<"     --> Error: La opcion debe ser numerica"<<endl;
+                } else if (!validaLongitud(option, 1)){
+                    cout<<"     --> Error: Opcion invalida"<<endl;
+                    option += "error";
                 }else if (stoi(option) == 1){
                     cout<<"     --> Error: La opcion no es editable"<<endl;
                     option = " ";
@@ -327,7 +332,7 @@ void ListStudent::editStudentData(){
                     return;
             }
             
-            string input = "";
+            input = "";
             getline(cin, input);
             if (input != ""){
                 switch (stoi(option)-1) {
