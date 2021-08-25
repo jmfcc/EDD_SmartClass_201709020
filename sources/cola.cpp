@@ -14,9 +14,9 @@ int Cola::getSize(){
     return this->size;
 }
 
-void Cola::queue(NodeStudent *errStudent_, string infoErr_){
+void Cola::queue(NodeStudent *errStudent_, string infoErr_, string infoErr_console_){
     this->countRegis++;
-    NodoCola *newNode = new NodoCola(errStudent_, infoErr_, this->countRegis);
+    NodoCola *newNode = new NodoCola(errStudent_, infoErr_, this->countRegis, infoErr_console_);
     if (estaVacia()){
         this->cabeza = newNode;
     }else{
@@ -29,9 +29,9 @@ void Cola::queue(NodeStudent *errStudent_, string infoErr_){
     this->size++;
 }
 
-void Cola::queue(NodeTask *errTask_, string infoErr_){
+void Cola::queue(NodeTask *errTask_, string infoErr_, string infoErr_console_){
     this->countRegis++;
-    NodoCola *newNode = new NodoCola(errTask_, infoErr_, this->countRegis);
+    NodoCola *newNode = new NodoCola(errTask_, infoErr_, this->countRegis, infoErr_console_);
     if (estaVacia()){
         this->cabeza = newNode;
     }else{
@@ -52,10 +52,11 @@ void Cola::dequeue(){
         this->size--;
     }
 }
+
 void Cola::graficar(){
     int limit = this->size;
-    string commandG = "dot -Tpdf errores.dot -o statusErrors"+to_string(this->generates)+".pdf";
-    string commandO = "start statusErrors"+to_string(this->generates)+".pdf";
+    string commandG = "dot -Tpng errores.dot -o statusErrors"+to_string(this->generates)+".png";
+    string commandO = "start statusErrors"+to_string(this->generates)+".png";
     if (estaVacia()){
         cout<<"\n     --- NO HAY REGISTROS EN COLA DE ERRORES PARA GRAFICAR ---"<<endl;
     }else{
@@ -117,4 +118,8 @@ void Cola::recorrer(){
         }
     }
     
+}
+
+NodoCola *Cola::getNodeError(){
+    return this->cabeza;   
 }
