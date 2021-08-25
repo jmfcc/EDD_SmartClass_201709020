@@ -179,7 +179,7 @@ void ListTask::insertTaskByConsole(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaHora(stoi(input))){
-                            cout<<"       --> Error: La hora está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: La hora esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -192,7 +192,8 @@ void ListTask::insertTaskByConsole(){
 
                             string month_ = getSeparateMonth(input);
                             string day_ = getSeparateDay(input);
-                            if (!isTheDateAvaible(stoi(month_)-7, stoi(day_)-1, stoi(data[4])-8)){
+                            // int indx = h + 9 * ( d + 30 * m );
+                            if (!avaibleDateTask((stoi(data[4])-8) + 9 * ((stoi(day_)-1) + 30 * (stoi(month_)-7)))){
                                 cout<<"       --> Error: En esta fecha y hora ya esta registrada una tarea"<<endl;
                                 i = 4;
                             } else {
@@ -281,7 +282,7 @@ void ListTask::deleteTask(){
         cout<<"    --> Error: ID fuera de rango"<<endl;
         return;
     }
-
+    
     NodeTask *aux = this->head;
     while(aux != NULL){
         if (aux->getID() == id_){
@@ -303,6 +304,22 @@ void ListTask::deleteTask(){
     }
 }
 
+void ListTask::deleteTaskFromEdit(int id_){
+
+    NodeTask *aux = this->head;
+    while(aux != NULL){
+        if (aux->getID() == id_){
+            if (aux->getCardNumber() != 0){
+                deleteTaskArray(aux->getMonth(), aux->getDay(), aux->getHour());
+                aux->clearNodeValues();
+            } else {
+                cout<<"     --> Error: La tarea seleccionada no existe"<<endl;
+            }
+        }
+        aux = aux->getNext();
+    }
+}
+
 void ListTask::deleteTaskArray(int indxM, int indxD, int indxH){
     myArrTask[indxM-7][indxD-1][indxH-8] = NULL;
 }
@@ -315,6 +332,186 @@ void ListTask::editTaskData(){
     }
     
     int id_ = stoi(sid_) - 1;
+    if (id_ < 0 || id_ > 1349){
+        cout<<"    --> Error: ID fuera de rango"<<endl;
+        return;
+    }
+
+    NodeTask *aux = this->head;
+    while(aux != NULL){
+        if (aux->getID() == id_){
+            if (aux->getCardNumber() != 0){
+                break;
+            } else {
+                cout<<"     --> Error: La tarea seleccionada no existe"<<endl;
+                return;
+            }
+        }
+        aux = aux->getNext();
+    }
+
+    bool edit = true;
+    string option = "";
+    while (edit) {
+        cout<<"\n  --------- Editar Tarea -----------"<<endl;
+        cout<<"   Nota: Para cancelar una modificacion, deje el campo vacio y presione enter"<<endl;
+        cout<<"\n         -- ID :                 "<<aux->getID()+1<<endl;
+        cout<<"   1 - Carnet (Actual):          "<<aux->getCardNumber()<<endl;
+        cout<<"   2 - Nombre de tarea (Actual): "<<aux->getTaskName()<<endl;
+        cout<<"   3 - Descripcion (Actual):     "<<aux->getTaskDesc()<<endl;
+        cout<<"   4 - Materia (Actual):         "<<aux->getCourse()<<endl;
+        cout<<"   5 - Fecha (Actual):           "<<aux->getDate()<<endl;
+        cout<<"   6 - Hora (Actual):            "<<aux->getHour()<<":00"<<endl;
+        cout<<"   7 - Estado (Actual):          "<<aux->getStatus()<<endl;
+        cout<<"   8 - Finalizar edicion"<<endl;
+        do
+        {
+            option = "";
+            cout<<"   >> Selecciona una opcion: ";
+            getline(cin, option);
+            if (option == ""){
+                cout<<"     --> Error: Debe seleccionar una opcion"<<endl;
+                option = "x";
+            } else if (!validaNumero(option)){
+                cout<<"     --> Error: La opcion debe ser numerica"<<endl;
+            } else if (stoi(option) > 8 || stoi(option) < 1){
+                cout<<"     --> Error: La opcion debe ser del rango de 1-8"<<endl;
+                option += "error";
+            }
+        } while (!validaNumero(option));
+        
+        bool isOk = false;
+        while (!isOk) {
+            switch (stoi(option)-1) {
+                case 0:
+                    cout<<"     >> Ingresa el numero de carnet: ";
+                    break;
+                case 1:
+                    cout<<"     >> Ingresa el nombre de la tarea: ";
+                    break;
+                case 2:
+                    cout<<"     >> Ingresa la descripcion: ";
+                    break;
+                case 3:
+                    cout<<"     >> Ingresa el curso: ";
+                    break;
+                case 4:
+                    cout<<"     >> Ingresa la fecha (YYYY/MM/DD): ";
+                    break;
+                case 5:
+                    cout<<"     >> Ingresa la hora (8 - 16): ";
+                    break;
+                case 6:
+                    cout<<"     >> Ingresa el estado: ";
+                    break;
+                case 7:
+                    return;
+            }
+
+            string input = "";
+            getline(cin, input);
+            if (input != ""){
+                switch (stoi(option)-1) {
+                    case 0: //Carnet
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaLongitud(input, 9)){
+                            cout<<"       --> Error: La longitud del carnet es distinta de la esperada"<<endl;
+                        } else if (!refStud->searchStudentByCardNumber(stoi(input))){
+                            cout<<"       --> Error: El carnet ingresado no esta registrado"<<endl;
+                        } else {
+                            aux->setCardNumber(stoi(input));
+                            isOk = true;
+                        }
+                        break;
+                    case 1:  // Nombre Tarea
+                        aux->setTaskName(input);
+                        isOk = true;
+                        break;
+                    case 2:  // Desc. Tarea
+                        aux->setTaskDesc(input);
+                        isOk = true;
+                        break;
+                    case 3:  // Materia
+                        aux->setCourse(input);
+                        isOk = true;
+                        break;
+                    case 4:  // Fecha
+                        if (!validaFecha(input)){
+                            cout<<"       --> Error: Verifique que la fecha este correcta y se encuentre en el rango permitido"<<endl;
+                        } else {
+                            string month_ = getSeparateMonth(input);
+                            string day_ = getSeparateDay(input);
+                            int indx = (aux->getHour() - 8) + 9 * ( (stoi(day_) - 1) + 30 * (stoi(month_) - 7) );
+                            // int indx = h + 9 * ( d + 30 * m );
+                            if (aux->getDate() == input){
+                                cout<<"       --> Info: Se ha ingresado la misma fecha registrada"<<endl;
+                            } else if (!avaibleDateTask(indx)){
+                                cout<<"       --> Error: En esta fecha y hora ya esta registrada una tarea"<<endl;
+                            } else {
+                                int id_ = aux->getID();
+                                //Inserto en la nueva "ubicación" de la tarea
+                                insertTaskArray(stoi(month_)-7, stoi(day_)-1, aux->getHour()-8, aux->getCardNumber(), aux->getTaskName(), aux->getTaskDesc(), aux->getCourse(), input, aux->getHour(), aux->getStatus(), stoi(month_), stoi(day_));
+                                insertTask(indx, aux->getCardNumber(), aux->getTaskName(), aux->getTaskDesc(), aux->getCourse(), input, aux->getHour(), aux->getStatus(), stoi(month_), stoi(day_));
+                                //Muevo mi auxiliar hacia la tarea insertada
+                                NodeTask *temp = this->head;
+                                while(temp != NULL){
+                                    if (temp->getID() == indx){
+                                        aux = temp;
+                                        break;
+                                    }
+                                    temp = temp->getNext();
+                                }
+                                deleteTaskFromEdit(id_);
+                            }
+                            isOk = true;
+                        }
+                        break;
+                    case 5:  // Hora
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
+                        } else if (!validaHora(stoi(input))){
+                            cout<<"       --> Error: La hora esta fuera del rango permitido"<<endl;
+                        } else {
+                            int indx = (stoi(input) - 8) + 9 * ( (aux->getDay() - 1) + 30 * (aux->getMonth() - 7) );
+                            if (aux->getHour() == stoi(input)){
+                                cout<<"       --> Info: Se ha ingresado la misma hora registrada"<<endl;
+                            } else if (!avaibleDateTask(indx)){
+                                cout<<"       --> Error: En esta fecha y hora ya esta registrada una tarea"<<endl;
+                            } else {
+                                int id_ = aux->getID();
+                                //Inserto en la nueva "ubicación" de la tarea
+                                insertTaskArray(aux->getMonth()-7, aux->getDay()-1, stoi(input)-8, aux->getCardNumber(), aux->getTaskName(), aux->getTaskDesc(), aux->getCourse(), aux->getDate(), stoi(input), aux->getStatus(), aux->getMonth(), aux->getDay());
+                                insertTask(indx, aux->getCardNumber(), aux->getTaskName(), aux->getTaskDesc(), aux->getCourse(), aux->getDate(), stoi(input), aux->getStatus(), aux->getMonth(), aux->getDay());
+                                //Muevo mi auxiliar hacia la tarea insertada
+                                NodeTask *temp = this->head;
+                                while(temp != NULL){
+                                    if (temp->getID() == indx){
+                                        aux = temp;
+                                        break;
+                                    }
+                                    temp = temp->getNext();
+                                }
+                                deleteTaskFromEdit(id_);
+                            }
+                            isOk = true;
+                        }
+                        break;
+                    case 6:  // Estado
+                        if (!validaEstado(input)){
+                            cout<<"       --> Error: El estado unicamente puede ser, Pendiente-Realizado-Cumplido-Incumplido"<<endl;
+                        } else {
+                            aux->setStatus(input);
+                            isOk = true;
+                        }
+                        break;
+                }
+            }else{
+                cout<<"     --> Se ha anulado la operacion"<<endl;
+                isOk = true;
+            }
+        }
+    }
 }
 
 void ListTask::reportTask(){
@@ -346,7 +543,7 @@ void ListTask::reportTask(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaMes(stoi(input))){
-                            cout<<"       --> Error: El mes está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: El mes esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -356,7 +553,7 @@ void ListTask::reportTask(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaDia(stoi(input))){
-                            cout<<"       --> Error: El dia está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: El dia esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -366,7 +563,7 @@ void ListTask::reportTask(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaHora(stoi(input))){
-                            cout<<"       --> Error: La hora está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: La hora esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -429,7 +626,7 @@ void ListTask::calculatePosition(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaMes(stoi(input))){
-                            cout<<"       --> Error: El mes está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: El mes esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -439,7 +636,7 @@ void ListTask::calculatePosition(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaDia(stoi(input))){
-                            cout<<"       --> Error: El dia está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: El dia esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -449,7 +646,7 @@ void ListTask::calculatePosition(){
                         if (!validaNumero(input)){
                             cout<<"       --> Error: La entrada contiene caracteres no numericos"<<endl;
                         } else if (!validaHora(stoi(input))){
-                            cout<<"       --> Error: La hora está fuera del rango permitido"<<endl;
+                            cout<<"       --> Error: La hora esta fuera del rango permitido"<<endl;
                         } else {
                             data[i] = input;
                             isOk = true;
@@ -468,8 +665,20 @@ void ListTask::calculatePosition(){
     cout<<"   :: Indice resultante (ID): "<<index+1<<endl;
 }
 
-void ListTask::searchTask(string cardNumber_, int id_){
-    //Not implemented
+bool ListTask::avaibleDateTask(int id_){
+    NodeTask *aux = this->head;
+
+    while (aux != NULL){
+        if (aux->getID() == id_){
+            if (aux->getCardNumber() == 0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        aux = aux->getNext();
+    }
+    return false;
 }
 
 bool ListTask::isTheDateAvaible(int indxM, int indxD, int indxH){
@@ -484,8 +693,8 @@ bool ListTask::existCardNumber(int cardNumber_){
 
 void ListTask::graficar(){
     int limit = this->size;
-    string commandG = "dot -Tpng task.dot -o statusTask"+to_string(this->generates)+".png";
-    string commandO = "start statusTask"+to_string(this->generates)+".png";
+    string commandG = "dot -Tpdf task.dot -o statusTask"+to_string(this->generates)+".pdf";
+    string commandO = "start statusTask"+to_string(this->generates)+".pdf";
     if (isEmpty()){
         cout<<"\n     --- NO HAY REGISTROS EN LISTA DE TAREAS PARA GRAFICAR ---"<<endl;
     }else{
@@ -495,7 +704,7 @@ void ListTask::graficar(){
         
         file<<"digraph D {\n";
         file<<"\trankdir=LR\n";
-        file<<"\tgraph [dpi = 200];\n";
+        // file<<"\tgraph [dpi = 200];\n";
         file<<"\tedge[dir=both];\n";
         
         NodeTask *aux = this->head;
@@ -561,28 +770,28 @@ void ListTask::graficar(){
             nNode++;
         }
 
-        nNode--;
-        init = true;
-        while (nNode >= 675){
-            if (init){
-                file<<";\n\tn"<<nNode<<"";
-                init = false;
-            } else {
-                file<<"->n"<<nNode;
-            }
-            nNode--;
-        }
-        nNode++;
-        init = true;
-        while (nNode >= 0){
-            if (init){
-                file<<";\n\tn"<<nNode<<"";
-                init = false;
-            } else {
-                file<<"->n"<<nNode;
-            }
-            nNode--;
-        }
+        // nNode--;
+        // init = true;
+        // while (nNode >= 675){
+        //     if (init){
+        //         file<<";\n\tn"<<nNode<<"";
+        //         init = false;
+        //     } else {
+        //         file<<"->n"<<nNode;
+        //     }
+        //     nNode--;
+        // }
+        // nNode++;
+        // init = true;
+        // while (nNode >= 0){
+        //     if (init){
+        //         file<<";\n\tn"<<nNode<<"";
+        //         init = false;
+        //     } else {
+        //         file<<"->n"<<nNode;
+        //     }
+        //     nNode--;
+        // }
 
 
         file<<"\n}\n";

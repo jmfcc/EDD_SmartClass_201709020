@@ -41,13 +41,14 @@ public:
     void showMatrixContent();
     
     void deleteTask();
+    void deleteTaskFromEdit(int id_);
     void deleteTaskArray(int indxM, int indxD, int indxH);
 
     void editTaskData();
     //Existence validations
     void reportTask();
     void calculatePosition();
-    void searchTask(string cardNumber_, int id_);
+    bool avaibleDateTask(int id_);
     bool isTheDateAvaible(int indxM, int indxD, int indxH);
 
     //Others
