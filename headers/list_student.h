@@ -42,6 +42,8 @@ public:
     void editStudentData();
 
     void graficar();
+
+    void writeSpecialFile();
 };
 
 #endif

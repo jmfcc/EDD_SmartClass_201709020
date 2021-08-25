@@ -449,3 +449,23 @@ void ListStudent::graficar(){
         this->generates++;
     }
 }
+
+void ListStudent::writeSpecialFile(){
+    ofstream specialfile_;
+    specialfile_.open("specialFile.txt", std::ios::app);
+    NodeStudent *aux = this->head;
+    do{
+        specialfile_<<"\t¿element type = \"user\"?\n";
+        specialfile_<<"\t\t¿item Carnet = \""+to_string(aux->getCardNumber())+"\" $?\n";
+        specialfile_<<"\t\t¿item DPI = \""+aux->getDPI()+"\" $?\n";
+        specialfile_<<"\t\t¿item Nombre = \""+aux->getName()+"\" $?\n";
+        specialfile_<<"\t\t¿item Carrera = \""+aux->getCareer()+"\" $?\n";
+        specialfile_<<"\t\t¿item Email = \""+aux->getEmail()+"\" $?\n";
+        specialfile_<<"\t\t¿item Password = \""+aux->getPassword()+"\" $?\n";
+        specialfile_<<"\t\t¿item Creditos = \""+to_string(aux->getCredits())+"\" $?\n";
+        specialfile_<<"\t\t¿item Edad = \""+to_string(aux->getAge())+"\" $?\n";
+        specialfile_<<"\t¿$element?\n";
+        aux = aux->getNext();
+    } while (aux != this->head);
+    specialfile_.close();
+}

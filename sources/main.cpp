@@ -20,6 +20,7 @@ void mySwitch(int);
 int getIntegerInput();
 string getExistFileURLInput();
 void fixErrors();
+void generateFile();
 
 int main(){
     system("cls");
@@ -180,6 +181,7 @@ void mySwitch(int opcion){
             } else if (opt == 6){
                 if (errors->getSize() == 0){
                     //generar archivo de salida
+                    generateFile();
                 } else {
                     cout<<"    >> Info: El reporte no se puede generar porque hay ("<<errors->getSize()<<") errores en cola"<<endl;
                 }
@@ -682,3 +684,15 @@ void fixErrors(){
     }
 }
 
+void generateFile(){
+    ofstream specialfile;
+    specialfile.open("specialFile.txt");
+    specialfile<<"¿Elements?\n";
+    specialfile.close();
+    //Call writter of list student
+    students->writeSpecialFile();
+    tasks->writeSpecialFile();
+    specialfile.open("specialFile.txt", std::ios::app);
+    specialfile<<"¿$Elements?";
+    specialfile.close();
+}

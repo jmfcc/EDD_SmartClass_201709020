@@ -55,6 +55,8 @@ public:
     bool existCardNumber(int cardNumber_);
 
     void graficar();
+
+    void writeSpecialFile();
 };
 
 #endif
