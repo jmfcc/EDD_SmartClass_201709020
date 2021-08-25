@@ -20,6 +20,7 @@ int getIntegerInput();
 string getExistFileURLInput();
 
 int main(){
+    system("cls");
     students->setColaRef(errors);
     tasks->setColaRef(errors);
     tasks->setStudentRef(students);
@@ -137,13 +138,14 @@ void mySwitch(int opcion){
             cout<<"     4 - Calculo de posicion"<<endl;
             cout<<"     5 - Cola de errores"<<endl;
             cout<<"     6 - Generar codigo de salida"<<endl;
+            cout<<"     7 - Regresar al menu principal"<<endl;
             do {
                 cout<<"     >> Ingresa una opcion: ";
                 opt = getIntegerInput();
-                if (opt < 1 || opt > 6){
+                if (opt < 1 || opt > 7){
                     cout<<"      --> Error: Debe elegir un numero de opcion correcta"<<endl;;
                 }
-            } while (opt < 1 || opt > 4);
+            } while (opt < 1 || opt > 7);
             
             if (opt == 1){
                 students->graficar();
