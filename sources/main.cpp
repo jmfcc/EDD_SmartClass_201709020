@@ -695,4 +695,5 @@ void generateFile(){
     specialfile.open("specialFile.txt", std::ios::app);
     specialfile<<"¿$Elements?";
     specialfile.close();
+    cout<<"    >> Archivo specialFile.txt generado exitosamente"<<endl;
 }

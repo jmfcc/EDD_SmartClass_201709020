@@ -808,25 +808,27 @@ void ListTask::writeSpecialFile(){
     ofstream specialfile_;
     specialfile_.open("specialFile.txt", std::ios::app);
     NodeTask *aux = this->head;
-    do{
-        specialfile_<<"\t¿element type = \"task\"?\n";
-        specialfile_<<"\t\t¿item Carnet = \""+to_string(aux->getCardNumber())+"\" $?\n";
-        specialfile_<<"\t\t¿item Nombre = \""+aux->getTaskName()+"\" $?\n";
-        specialfile_<<"\t\t¿item Descripcion = \""+aux->getTaskDesc()+"\" $?\n";
-        specialfile_<<"\t\t¿item Materia = \""+aux->getCourse()+"\" $?\n";
-        string month_ = getSeparateMonth(aux->getDate());
-        string day_ = getSeparateDay(aux->getDate());
-        specialfile_<<"\t\t¿item Fecha = \""+day_+"/"+month_+"/2021"+"\" $?\n";
-        string hour_ = "";
-        if (aux->getHour() < 10){
-            hour_ = "0"+ to_string(aux->getHour());
-        }else{
-            hour_ = to_string(aux->getHour());
+    while (aux != NULL){
+        if (aux->getCardNumber() != 0){
+            specialfile_<<"\t¿element type = \"task\"?\n";
+            specialfile_<<"\t\t¿item Carnet = \""+to_string(aux->getCardNumber())+"\" $?\n";
+            specialfile_<<"\t\t¿item Nombre = \""+aux->getTaskName()+"\" $?\n";
+            specialfile_<<"\t\t¿item Descripcion = \""+aux->getTaskDesc()+"\" $?\n";
+            specialfile_<<"\t\t¿item Materia = \""+aux->getCourse()+"\" $?\n";
+            string month_ = getSeparateMonth(aux->getDate());
+            string day_ = getSeparateDay(aux->getDate());
+            specialfile_<<"\t\t¿item Fecha = \""+day_+"/"+month_+"/2021"+"\" $?\n";
+            string hour_ = "";
+            if (aux->getHour() < 10){
+                hour_ = "0"+ to_string(aux->getHour());
+            }else{
+                hour_ = to_string(aux->getHour());
+            }
+            specialfile_<<"\t\t¿item Hora = \""+hour_+":00\" $?\n";
+            specialfile_<<"\t\t¿item Estado = \""+aux->getStatus()+"\" $?\n";
+            specialfile_<<"\t¿$element?\n";
         }
-        specialfile_<<"\t\t¿item Hora = \""+hour_+":00\" $?\n";
-        specialfile_<<"\t\t¿item Estado = \""+aux->getStatus()+"\" $?\n";
-        specialfile_<<"\t¿$element?\n";
         aux = aux->getNext();
-    } while (aux != this->head);
+    }
     specialfile_.close();
 }
