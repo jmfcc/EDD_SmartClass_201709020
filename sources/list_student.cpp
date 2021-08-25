@@ -273,7 +273,7 @@ void ListStudent::editStudentData(){
             cout<<"\n  --------- Editar Estudiante -----------"<<endl;
             cout<<"   Nota: Para cancelar una modificacion, deje el campo vacio y presione enter"<<endl;
             cout<<"\n   1 - Carnet (No editable): "<<aux->getCardNumber()<<endl;
-            cout<<"   2 - DPI  (No editable):   "<<aux->getDPI()<<endl;
+            cout<<"   2 - DPI (Actual):         "<<aux->getDPI()<<endl;
             cout<<"   3 - Nombre (Actual):      "<<aux->getName()<<endl;
             cout<<"   4 - Carrera (Actual):     "<<aux->getCareer()<<endl;
             cout<<"   5 - Correo (Actual):      "<<aux->getEmail()<<endl;
@@ -291,17 +291,20 @@ void ListStudent::editStudentData(){
                     option = "x";
                 } else if (!validaNumero(option)){
                     cout<<"     --> Error: La opcion debe ser numerica"<<endl;
-                }else if (stoi(option) > 0 && stoi(option) < 3){
+                }else if (stoi(option) == 1){
                     cout<<"     --> Error: La opcion no es editable"<<endl;
                     option = " ";
                 }else if (stoi(option) > 9 || stoi(option) < 0){
-                    cout<<"     --> Error: La opcion debe ser del rango de 3-8"<<endl;
+                    cout<<"     --> Error: Debe seleccionar una opción valida (2-8)"<<endl;
                     option += "error";
                 }
             } while (!validaNumero(option));
             
 
             switch (stoi(option)-1) {
+                case 1:
+                    cout<<"     >> Ingresa el DPI: ";
+                    break;
                 case 2:
                     cout<<"     >> Ingresa el nombre: ";
                     break;
@@ -328,6 +331,15 @@ void ListStudent::editStudentData(){
             getline(cin, input);
             if (input != ""){
                 switch (stoi(option)-1) {
+                    case 1:  // DPI
+                        if (!validaNumero(input)){
+                            cout<<"       --> Error: Debe ingresar un valor numerico"<<endl;
+                        } else if (!validaLongitud(input, 13)) {
+                            cout<<"       --> Error: Se esperanba una longitud de 13 digitos"<<endl;
+                        } else {
+                            aux->setDPI(input);
+                        }
+                        break;
                     case 2:  // Name
                         aux->setName(input);
                         break;
@@ -376,8 +388,8 @@ void ListStudent::editStudentData(){
 
 void ListStudent::graficar(){
     int limit = this->size;
-    string commandG = "dot -Tpdf students.dot -o statusStudents"+to_string(this->generates)+".pdf";
-    string commandO = "start statusStudents"+to_string(this->generates)+".pdf";
+    string commandG = "dot -Tpng students.dot -o statusStudents"+to_string(this->generates)+".png";
+    string commandO = "start statusStudents"+to_string(this->generates)+".png";
     if (isEmpty()){
         cout<<"\n     --- NO HAY REGISTROS PARA GRAFICAR ---"<<endl;
     }else{
@@ -398,9 +410,9 @@ void ListStudent::graficar(){
             + "\\nCarnet: " + to_string(aux->getCardNumber())
             + "\\nNombre: " + aux->getName();
             
-            file<<"\tnodo_"<<count<<"[shape=record,label=\"{<f0>|<f2>";
+            file<<"\tnodo_"<<count<<"[shape=record,label=\"";
             file<<formatInfo;
-            file<<"|<f1>}\"];\n";
+            file<<"\"];\n";
             
             aux = aux->getNext();
             count++;
@@ -410,28 +422,29 @@ void ListStudent::graficar(){
         file<<"\tnodo_inicio->nodo_0[label=\"Primero\"]\n";
 
         if (limit == 1){
-            file<<"\tnodo_0:f1:n->nodo_0:f0:n\n";
-            file<<"\tnodo_0:f0:s->nodo_0:f1:s\n";
+            file<<"\tnodo_0->nodo_0\n";
+            file<<"\tnodo_0->nodo_0\n";
         }else{
             for (int i = 1; i < limit; i++){
-                file<<"\tnodo_"<<i-1<<":f1:n";
-                file<<"->";
-                file<<"nodo_"<<i<<":f0:n\n";
+                file<<"\tnodo_"<<i-1<<" ";
+                file<<"-> ";
+                file<<"nodo_"<<i<<";\n";
 
-                file<<"\tnodo_"<<i<<":f0:s";
-                file<<"->";
-                file<<"nodo_"<<i-1<<":f1:s\n";
+                file<<"\tnodo_"<<i<<" ";
+                file<<"-> ";
+                file<<"nodo_"<<i-1<<"\n";
             }
-            file<<"\tnodo_"<<limit-1<<":f1:n";
-            file<<"->nodo_0:f0:n\n";
+            file<<"\tnodo_"<<limit-1<<" ";
+            file<<"-> nodo_0\n";
 
-            file<<"\tnodo_0:f0:s";
-            file<<"->nodo_"<<limit-1<<":f1:s\n";
+            file<<"\tnodo_0";
+            file<<"->nodo_"<<limit-1<<"\n";
         }
         file<<"}\n";
         file.close();
         
         system(commandG.c_str());
+        // system("pause");
         system(commandO.c_str());
         this->generates++;
     }
