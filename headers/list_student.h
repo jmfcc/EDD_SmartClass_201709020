@@ -29,7 +29,7 @@ public:
     void setSize(string type_);
 
     void insertStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_);
-    void insertErrorStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_, string infoErr_);
+    void insertErrorStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_, string infoErr_, string infoErr_console_);
     void showListContent();
     
     void deleteStudent();

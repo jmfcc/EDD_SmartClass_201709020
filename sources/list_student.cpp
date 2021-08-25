@@ -61,9 +61,9 @@ void ListStudent::insertStudent(int cardNumber_, string dpi_, string name_, stri
     // this->size++;
 }
 
-void ListStudent::insertErrorStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_, string infoErr_){
+void ListStudent::insertErrorStudent(int cardNumber_, string dpi_, string name_, string career_, string email_, string password_, int credits_, int age_, string infoErr_, string infoErr_console_){
     NodeStudent *newNode = new NodeStudent(cardNumber_, dpi_, name_, career_, email_, password_, credits_, age_);
-    this->refError->queue(newNode, infoErr_);
+    this->refError->queue(newNode, infoErr_, infoErr_console_);
 }
 
 void ListStudent::showListContent(){

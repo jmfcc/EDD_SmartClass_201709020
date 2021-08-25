@@ -121,9 +121,9 @@ void ListTask::insertTask(int id_, int cardNumber_, string taskName_, string tas
     aux->setDay(day_);
 }
 
-void ListTask::insertErrorTask(int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_, string infoErr_){
+void ListTask::insertErrorTask(int cardNumber_, string taskName_, string taskDesc_, string course_, string date_, int hour_, string status_, int month_, int day_, string infoErr_, string infoErr_console_){
     NodeTask *newNode = new NodeTask(-1, cardNumber_, taskName_, taskDesc_, course_, date_, hour_, status_, month_, day_);
-    this->refError->queue(newNode, infoErr_);
+    this->refError->queue(newNode, infoErr_, infoErr_console_);
 }
 
 void ListTask::insertTaskByConsole(){
@@ -713,6 +713,7 @@ void ListTask::graficar(){
         while (aux != NULL) {
             string formatInfo = "ID: " + to_string(aux->getID()+1);
             if (aux->getCardNumber() != 0){
+                formatInfo += "  -  Fecha y hora: " + aux->getDate() + " "+to_string(aux->getHour())+":00";
                 formatInfo += "\\nCarnet: " + to_string(aux->getCardNumber())
                 + "\\nNombre Tarea: " + aux->getTaskName()
                 + "\\nDescripcion: " + aux->getTaskDesc();
