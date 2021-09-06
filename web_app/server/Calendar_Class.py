@@ -119,15 +119,15 @@ class CalendarTask:
             hourRow = hourRow.next
 
 
-myCalendar = CalendarTask(8)
-myCalendar.insertNewTask(8, 8, "Tarea1", "Ingresada para el 8/8 - 8:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(11, 7, "Tarea2", "Ingresada para el 7/8 - 11:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(14, 12, "Tarea3", "Ingresada para el 12/8 - 14:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(16, 23, "Tarea4", "Ingresada para el 23/8 - 16:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(8, 9, "Tarea5", "Ingresada para el 9/8 - 8:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(7, 12, "Tarea6", "Ingresada para el 12/8 - 7:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(14, 9, "Tarea7", "Ingresada para el 9/8 - 14:00", "EDD", "Cumplida")
-myCalendar.insertNewTask(9, 23, "Tarea8", "Ingresada para el 23/8 - 9:00", "EDD", "Cumplida")
+# myCalendar = CalendarTask(8)
+# myCalendar.insertNewTask(8, 8, "Tarea1", "Ingresada para el 8/8 - 8:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(11, 7, "Tarea2", "Ingresada para el 7/8 - 11:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(14, 12, "Tarea3", "Ingresada para el 12/8 - 14:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(16, 23, "Tarea4", "Ingresada para el 23/8 - 16:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(8, 9, "Tarea5", "Ingresada para el 9/8 - 8:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(7, 12, "Tarea6", "Ingresada para el 12/8 - 7:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(14, 9, "Tarea7", "Ingresada para el 9/8 - 14:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(9, 23, "Tarea8", "Ingresada para el 23/8 - 9:00", "EDD", "Cumplida")
 
-# myCalendar.recorreDiaHora()
-myCalendar.recorreHoraDia()
+# # myCalendar.recorreDiaHora()
+# myCalendar.recorreHoraDia()
