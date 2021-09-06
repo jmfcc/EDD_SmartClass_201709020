@@ -1,4 +1,4 @@
-from year_class import ListYear
+from List_Year import ListYear
 
 class NodeStudent:
 
