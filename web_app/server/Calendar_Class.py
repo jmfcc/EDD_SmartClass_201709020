@@ -1,7 +1,7 @@
 from Calendar_Nodes import NodeCellTask, NodeColumnDay, NodeRowHour
 from Calendar_Headers import ListHeaderDay, ListHeaderHour
 from task import ListTask
-from Graph_Functions import graphDMatrix
+# from Graph_Functions import graphDMatrix
 
 class CalendarTask:
     def __init__(self):
@@ -152,7 +152,9 @@ class CalendarTask:
                             elif toDeleteTask.above.prev is not None and toDeleteTask.above.next is None:
                                 toDeleteTask.above.prev.next = None
                             elif toDeleteTask.above.prev is None and toDeleteTask.above.next is not None:
-                                toDeleteTask.above.next.prev = None
+                                self.days.head = toDeleteTask.above.next
+                                # toDeleteTask.above = None
+                                print("aqui")
                     elif toDeleteTask.below is not None:
                         if isinstance(toDeleteTask.above, NodeCellTask):
                             toDeleteTask.above.below = toDeleteTask.below
@@ -171,7 +173,7 @@ class CalendarTask:
                             elif toDeleteTask.prev.prev is not None and toDeleteTask.prev.next is None:
                                 toDeleteTask.prev.prev.next = None
                             elif toDeleteTask.prev.prev is None and toDeleteTask.prev.next is not None:
-                                toDeleteTask.prev.next.prev = None
+                                self.hours.head = toDeleteTask.prev.next
                     elif toDeleteTask.next is not None:
                         if isinstance(toDeleteTask.prev, NodeCellTask):
                             toDeleteTask.prev.next = toDeleteTask.next
@@ -193,8 +195,16 @@ class CalendarTask:
 # myCalendar.insertNewTask(7, 12, "Tarea6", "Ingresada para el 12/8 - 7:00", "EDD", "Cumplida")
 # myCalendar.insertNewTask(14, 9, "Tarea7", "Ingresada para el 9/8 - 14:00", "EDD", "Cumplida")
 # myCalendar.insertNewTask(9, 23, "Tarea8", "Ingresada para el 23/8 - 9:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(14, 12, "Tarea9", "Ingresada para el 12/8 - 14:00", "EDD", "Cumplida")
 
+# myCalendar.deleteReminder(11,7,1)
+# myCalendar.deleteReminder(9,23,1)
+# myCalendar.deleteReminder(16,23,1)
+# myCalendar.deleteReminder(7,12,1)
+
+# myCalendar.insertNewTask(11, 7, "Tarea2", "Ingresada para el 7/8 - 11:00", "EDD", "Cumplida")
+# myCalendar.insertNewTask(7, 12, "Tarea6", "Ingresada para el 12/8 - 7:00", "EDD", "Cumplida")
 # graphDMatrix(myCalendar)
 
-# # # myCalendar.recorreDiaHora()
-# # myCalendar.recorreHoraDia()
+# # # # myCalendar.recorreDiaHora()
+# # # myCalendar.recorreHoraDia()
