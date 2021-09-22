@@ -15,7 +15,7 @@ class ListMonth:
     def insertMonth(self, month_):
         newNode = NodeMonth(month_)
         if self.isEmpty():
-            tempCalendar = CalendarTask(month_)
+            tempCalendar = CalendarTask()
             newNode.calendar = tempCalendar
             self.head = newNode
         else:

@@ -1,12 +1,12 @@
 from Calendar_Nodes import NodeCellTask, NodeColumnDay, NodeRowHour
 from Calendar_Headers import ListHeaderDay, ListHeaderHour
 from task import ListTask
+from Graph_Functions import graphDMatrix
 
 class CalendarTask:
-    def __init__(self, month_):
-        self.month = month_
-        self.days = ListHeaderDay()
-        self.hours = ListHeaderHour()
+    def __init__(self):
+        self.days = ListHeaderDay() #Cols
+        self.hours = ListHeaderHour() #Rows
 
     def insertNewCellData(self, hour, day):
         newNodeCell = NodeCellTask(day, hour)  # ---- Celda con apuntador a lista tareas
@@ -20,6 +20,7 @@ class CalendarTask:
             newListTask = ListTask()   # ------------- Creando LISTA DE TAREAS
             newNodeCell.accesListTasks = newListTask # ----
             columnDay.accesNodeCell = newNodeCell # Asignando Nodo Celda
+            newNodeCell.above = columnDay
         else:
             if hour == columnDay.accesNodeCell.hour:  # if the node already exist only add the new task
                 pass
@@ -28,7 +29,10 @@ class CalendarTask:
                 newNodeCell.accesListTasks = newListTask # ----
 
                 newNodeCell.below = columnDay.accesNodeCell
+                columnDay.accesNodeCell.above = newNodeCell
                 columnDay.accesNodeCell = newNodeCell
+                newNodeCell.above = columnDay
+
             else:
                 aux = columnDay.accesNodeCell
                 while aux.below != None:
@@ -39,7 +43,9 @@ class CalendarTask:
                         newNodeCell.accesListTasks = newListTask # ----
 
                         newNodeCell.below = aux.below
+                        aux.below.above = newNodeCell
                         aux.below = newNodeCell
+                        newNodeCell.above = aux
                         break
                     aux = aux.below
                 if aux.below == None:
@@ -47,19 +53,23 @@ class CalendarTask:
                     newNodeCell.accesListTasks = newListTask # ----
 
                     aux.below = newNodeCell
+                    newNodeCell.above = aux
         
         # INSERT BY HOUR (ROWS)
         rowHour = self.hours.getHeaderHour(hour) # rowHour = NodeRowHour()
         if rowHour == None:
             rowHour = NodeRowHour(hour)
             rowHour.accesNodeCell = newNodeCell
+            newNodeCell.prev = rowHour
             self.hours.setHeaderHour(rowHour)
         else:
             if day == rowHour.accesNodeCell.day:
                 pass
             elif day < rowHour.accesNodeCell.day:
                 newNodeCell.next = rowHour.accesNodeCell
+                rowHour.accesNodeCell.prev = newNodeCell
                 rowHour.accesNodeCell = newNodeCell
+                newNodeCell.prev = rowHour
             else:
                 aux = rowHour.accesNodeCell
                 while aux.next != None:
@@ -67,11 +77,14 @@ class CalendarTask:
                         break
                     elif day < aux.next.day:
                         newNodeCell.next = aux.next
+                        aux.next.prev = newNodeCell
                         aux.next = newNodeCell
+                        newNodeCell.prev = aux
                         break
                     aux = aux.next
                 if aux.next == None:
                     aux.next = newNodeCell
+                    newNodeCell.prev = aux
 
     def getCellCalendar(self, hour, day):
         col = self.days.getHeaderDay(day)
@@ -105,6 +118,7 @@ class CalendarTask:
                 hourRow = hourRow.below
             print("")
             dayCol = dayCol.next
+
     def recorreHoraDia(self):
         hourRow = self.hours.head
         # hourRow = NodeRowHour()
@@ -118,8 +132,59 @@ class CalendarTask:
             print("")
             hourRow = hourRow.next
 
+    def deleteReminder(self, hour, day, pos):
+        toDeleteTask = self.getCellCalendar(hour, day)
+        # toInserTask = NodeCellTask()
+        if toDeleteTask is None:
+            return " >> Error: no hay registros en esta fecha y hora"
+        else:
+            if toDeleteTask.accesListTasks.size >= pos and pos > 0:
+                toDeleteTask.accesListTasks.deleteTask(pos)
+                if toDeleteTask.accesListTasks.size == 0:
+                    # Cleaning Columns
+                    if toDeleteTask.below is None:
+                        if isinstance(toDeleteTask.above, NodeCellTask):
+                            toDeleteTask.above.below = None
+                        elif isinstance(toDeleteTask.above, NodeColumnDay):
+                            if toDeleteTask.above.prev is not None and toDeleteTask.above.next is not None:
+                                toDeleteTask.above.prev.next = toDeleteTask.above.next
+                                toDeleteTask.above.next.prev = toDeleteTask.above.prev
+                            elif toDeleteTask.above.prev is not None and toDeleteTask.above.next is None:
+                                toDeleteTask.above.prev.next = None
+                            elif toDeleteTask.above.prev is None and toDeleteTask.above.next is not None:
+                                toDeleteTask.above.next.prev = None
+                    elif toDeleteTask.below is not None:
+                        if isinstance(toDeleteTask.above, NodeCellTask):
+                            toDeleteTask.above.below = toDeleteTask.below
+                            toDeleteTask.below.above = toDeleteTask.above
+                        elif isinstance(toDeleteTask.above, NodeColumnDay):
+                            toDeleteTask.above.accesNodeCell = toDeleteTask.below
+                            toDeleteTask.below.above = toDeleteTask.above
+                    # Cleaning Rows
+                    if toDeleteTask.next is None:
+                        if isinstance(toDeleteTask.prev, NodeCellTask):
+                            toDeleteTask.prev.next = None
+                        elif isinstance(toDeleteTask.prev, NodeRowHour):
+                            if toDeleteTask.prev.prev is not None and toDeleteTask.prev.next is not None:
+                                toDeleteTask.prev.prev.next = toDeleteTask.prev.next
+                                toDeleteTask.prev.next.prev = toDeleteTask.prev.prev
+                            elif toDeleteTask.prev.prev is not None and toDeleteTask.prev.next is None:
+                                toDeleteTask.prev.prev.next = None
+                            elif toDeleteTask.prev.prev is None and toDeleteTask.prev.next is not None:
+                                toDeleteTask.prev.next.prev = None
+                    elif toDeleteTask.next is not None:
+                        if isinstance(toDeleteTask.prev, NodeCellTask):
+                            toDeleteTask.prev.next = toDeleteTask.next
+                            toDeleteTask.next.prev = toDeleteTask.prev
+                        elif isinstance(toDeleteTask.prev, NodeRowHour):
+                            toDeleteTask.prev.accesNodeCell = toDeleteTask.next
+                            toDeleteTask.next.prev = toDeleteTask.prev
+                return " >> Info: se ha eliminado la tarea"
+            return " >> Error: la posición está fuera de rango"
 
-# myCalendar = CalendarTask(8)
+
+
+# myCalendar = CalendarTask()
 # myCalendar.insertNewTask(8, 8, "Tarea1", "Ingresada para el 8/8 - 8:00", "EDD", "Cumplida")
 # myCalendar.insertNewTask(11, 7, "Tarea2", "Ingresada para el 7/8 - 11:00", "EDD", "Cumplida")
 # myCalendar.insertNewTask(14, 12, "Tarea3", "Ingresada para el 12/8 - 14:00", "EDD", "Cumplida")
@@ -129,5 +194,7 @@ class CalendarTask:
 # myCalendar.insertNewTask(14, 9, "Tarea7", "Ingresada para el 9/8 - 14:00", "EDD", "Cumplida")
 # myCalendar.insertNewTask(9, 23, "Tarea8", "Ingresada para el 23/8 - 9:00", "EDD", "Cumplida")
 
-# # myCalendar.recorreDiaHora()
-# myCalendar.recorreHoraDia()
+# graphDMatrix(myCalendar)
+
+# # # myCalendar.recorreDiaHora()
+# # myCalendar.recorreHoraDia()

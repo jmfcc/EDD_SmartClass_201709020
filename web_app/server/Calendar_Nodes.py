@@ -17,7 +17,7 @@ class NodeCellTask:
         self.day = day_
         self.hour = hour_
         self.next = None
-        # self.prev = None
-        # self.above = None
+        self.prev = None
+        self.above = None
         self.below = None
         self.accesListTasks = None

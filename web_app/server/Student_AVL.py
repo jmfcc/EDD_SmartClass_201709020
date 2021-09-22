@@ -1,4 +1,5 @@
 from List_Year import ListYear
+# from Graph_Functions import graphTreeAVL
 
 class NodeStudent:
 
@@ -48,14 +49,14 @@ class StudentAVL:
         else:
             if cardnumber_ < root.cardnumber:
                 root.left = self.insert_intern(cardnumber_, root.left, dpi_, name_, carrer_, email_, password_, credits_, age_)
-                if self.height(root.right) - self.height(root.left)== -2:
+                if self.height(root.left) - self.height(root.right)== 2:
                     if cardnumber_ < root.left.cardnumber:
                         root = self.RI(root)
                     else:
                         root = self.RDI(root)
             elif cardnumber_ > root.cardnumber:
                 root.right = self.insert_intern(cardnumber_, root.right, dpi_, name_, carrer_, email_, password_, credits_, age_)
-                if self.height(root.right) - self.height(root.right)== 2:
+                if self.height(root.right) - self.height(root.left)== 2:
                     if cardnumber_ > root.right.cardnumber:
                         root = self.RD(root)
                     else:
@@ -65,6 +66,9 @@ class StudentAVL:
         root.height = self.Max(self.height(root.left), self.height(root.right)) + 1
 
         return root
+
+    def delete_student(self, cardnumber):
+        pass
 
     #Rotations ------------------------------------------------------------------------
     def RI(self, node):
@@ -120,8 +124,8 @@ class StudentAVL:
             print("Carnet:",root.cardnumber,"  Nombre:", root.name)
 
     #GetRecordByBynarySearch ----------------------------------------------------------------------
-    def getStudent(self, cardnumer_):
-        return self.getStudent_intern(cardnumer_, self.Root)
+    def getStudent(self, cardnumber_):
+        return self.getStudent_intern(cardnumber_, self.Root)
 
     def getStudent_intern(self, cardnumber_, root_):
         if root_ is not None:
@@ -135,8 +139,8 @@ class StudentAVL:
         return None
 
     #BynarySearch (Bool) ----------------------------------------------------------------------
-    def searchStudent(self, cardnumer_):
-        return self.searchStudent_intern(cardnumer_, self.Root)
+    def searchStudent(self, cardnumber_):
+        return self.searchStudent_intern(cardnumber_, self.Root)
 
     def searchStudent_intern(self, cardnumber_, root_):
         if root_ is not None:
@@ -186,4 +190,5 @@ class StudentAVL:
 
 # print()
 # print("----------------------------------------")
-# studentTree.in_orden()
+# graphTreeAVL(studentTree)
+# # studentTree.in_orden()
