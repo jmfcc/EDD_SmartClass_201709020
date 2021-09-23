@@ -61,6 +61,15 @@ class ListTask:
                     aux = aux.next
             self.size-=1
     
+    def getTask(self, pos):
+        if not self.isEmpty():
+            count = 1
+            aux = self.head
+            while count <= self.size:
+                if pos == count:
+                    return aux
+                count += 1
+                aux = aux.next
     
 # myList = ListTask()
 
