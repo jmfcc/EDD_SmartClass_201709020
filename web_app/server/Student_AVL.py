@@ -153,13 +153,6 @@ class StudentAVL:
                     return self.searchStudent_intern(cardnumber_, root_.right)
         return False
 
-    #DeleteStudent -----------------------------------------------------------------------
-    
-            # -------- NOT IMPLEMENTED ------------
-
-    #Others ----------------------------------------------------------------------------
-    
-            # -------- NOT IMPLEMENTED ------------
 
 
 # studentTree = StudentAVL()
