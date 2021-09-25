@@ -14,12 +14,12 @@ class ListMonth:
         return self.head == None
     def insertMonth(self, month_):
         newNode = NodeMonth(month_)
+        tempCalendar = CalendarTask()
+        newNode.calendar = tempCalendar
         if self.isEmpty():
-            tempCalendar = CalendarTask()
-            newNode.calendar = tempCalendar
             self.head = newNode
         else:
-            if month_ < self.head:
+            if month_ < self.head.month:
                 newNode.next = self.head
                 self.head.prev = newNode
                 self.head = newNode
