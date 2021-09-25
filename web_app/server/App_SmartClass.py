@@ -1,9 +1,11 @@
-from datetime import date
-from os import name
+import os
 from flask import Flask, json, jsonify, request, Response
 from flask_cors import CORS
 from Student_AVL import StudentAVL
 from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix
+from analyzers.Syntactic import parser
+from analyzers.Syntactic import user_list, task_list
+from List_Month import ListMonth
 
 records = StudentAVL()
 
@@ -16,7 +18,10 @@ CORS(app)
 
 def isValid(*args):
   for val in args:
-    if not val:
+    if isinstance(val, int):
+      if val < 0:
+        return False
+    elif not val:
       return False
   return True
 
@@ -32,6 +37,20 @@ def splitHour(hour_):
     return int(sep[0])
   return ""
 
+def validatePath(ruta_):
+  if ruta_:
+    if os.path.isfile(ruta_):
+        return True
+  return False
+
+def uploadStudentFile(ruta_):
+  f = open(ruta_,"r", encoding="utf-8")
+  mensaje = f.read()
+  f.close()
+
+  parser.parse(mensaje)
+
+
 # #####################################################################################################################
 # ########                                              ENDPOINTS                                              ########
 # #####################################################################################################################
@@ -46,10 +65,43 @@ def loadFile():
     data = request.get_json(force=True)
     type_ = data["tipo"]
     path_ = data["path"]
+    msg = "Cargando un archivo"
     #Load -----------------------------------------------
-    #     ----- NOT IMPLEMENTED -----------
-    #     ----- NOT IMPLEMENTED -----------
-    return jsonify({ "response" : "I'm loading:" + path_ })
+    if isValid(type_, path_):
+      if validatePath(path_):
+        if type_ == "estudiante":
+          uploadStudentFile(path_)
+          aux = user_list.First
+          countUerr = 0
+          while aux is not None:
+            m = saveDataStudent(aux.Carnet, aux.DPI, aux.Nombre, aux.Carrera, aux.Correo, aux.Password, aux.Creditos, aux.Edad)
+            if "Error:" in m:
+              print(m)
+              countUerr += 1
+            aux = aux.Next
+          aux2 = task_list.First
+          countTerr = 0
+          while aux2 is not None:
+            # print("--------------------------------------------------")
+            # print("->",type(aux2.Carnet), "\n->", type(aux2.Nombre), "\n->", type(aux2.Descripcion), "\n->", type(aux2.Materia), "\n->", type(aux2.Fecha), "\n->", type(aux2.Hora), "\n->", type(aux2.Estado))
+            m = saveDataTask(aux2.Carnet, aux2.Nombre, aux2.Descripcion, aux2.Materia, aux2.Fecha, aux2.Hora, aux2.Estado)
+            if "Error:" in m:
+              print(m)
+              countTerr += 1
+            aux2 = aux2.Next
+          if countTerr == 0 and countUerr == 0:
+            msg = " >> Info: Se han almacenado todos los registros de estudiantes y sus tareas"
+          else:
+            msg = " >> Info: Se han detectado ({}) errores de estudiantes y ({}) errores de tareas".format(str(countUerr), str(countTerr))
+        elif type_ == "recordatorio":
+          pass
+        elif type_ == "curso":
+          pass
+        else:
+          msg = " >> Error: No se puede reconocer el tipo solicitado"
+      else:
+        msg = " >> Error: Ruta inválida"
+    return jsonify({ "response" : msg})
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
@@ -125,6 +177,7 @@ def report():
 # ---------------------------------------------------------------------------------------------------------------------
 # ---                                          CRUD ESTUDIANTES                                                     ---
 # ---------------------------------------------------------------------------------------------------------------------
+
 @app.route("/estudiante", methods=["POST"])
 def studentInsert():
   try:
@@ -139,19 +192,23 @@ def studentInsert():
     age_ = data["edad"]
     msg = "I'm saving a student data " 
     #Validation of type -----------------------------------------------
-    if isValid(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
-      if records.searchStudent(cardnumber_):
-        msg = " >> Info: El carnet {} ya está registrado".format(cardnumber_)
-      else:
-        records.insert(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
-        msg = " >> Info: Datos del estudiante almacenados correctamente" 
-    else:
-      msg = " >> Error: Verifique sus datos"
+    msg = saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
     return jsonify({ "response" : msg})
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
-@app.route("/estudiante", methods=["UPDATE"])
+def saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
+  if isValid(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
+    if records.searchStudent(cardnumber_):
+      return " >> Error: El carnet {} ya está registrado".format(cardnumber_)
+    else:
+      records.insert(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
+      return " >> Info: Datos del estudiante almacenados correctamente" 
+  else:
+    print("\n--",cardnumber_,"\n--", dpi_,"\n--", name_,"\n--", carrer_,"\n--", email_,"\n--", passw_,"\n--", credits_,"\n--", age_)
+    return " >> Error: Verifique sus datos"
+
+@app.route("/estudiante", methods=["PUT"])
 def studentUpdate():
   try:
     data = request.get_json(force=True)
@@ -241,36 +298,51 @@ def taskInsert():
     status_ = data["estado"]
     msg = "I'm will add a task for student"
     #Validation of type -----------------------------------------------
-    if isValid(cardnumber_, name_, desc_, course_, date_, hour_, status_):
-      if records.searchStudent(cardnumber_):
-        data = records.getStudent(cardnumber_) # NodeStudent
-        valid, day_, month_, year_ = splitDate(date_)
-        if valid:
+    msg = saveDataTask(cardnumber_, name_, desc_, course_, date_, hour_, status_)
+    return jsonify({ "response" : msg})
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+def saveDataTask(cardnumber_, name_, desc_, course_, date_, hour_, status_):
+  if isValid(cardnumber_, name_, desc_, course_, date_, hour_, status_):
+    if records.searchStudent(cardnumber_):
+      data = records.getStudent(cardnumber_) # NodeStudent
+      valid, day_, month_, year_ = splitDate(date_)
+      # print(day_, month_, year_)
+      if valid:
+        try:
           if not data.years.isEmpty() and data.years.searchYear(year_):
             data = data.years.getYear(year_) # NodeYear
           else:
             data.years.insertYear(year_)
             data = data.years.getYear(year_) # NodeYear
-          if not data.months.isEmpty() and data.months.searchMonth(month_):
+        except:
+          print("En la lista años")
+          return " >> Error: Acceso invalido a lista años"
+        try:
+          if data.months.searchMonth(month_):
             data = data.months.getMonth(month_) # NodeMonth
           else:
             data.months.insertMonth(month_)
             data = data.months.getMonth(month_) # NodeMonth
+        except:
+          print("En la lista meses")
+          return " >> Error: Acceso invalido a meses"
+        try:
           hour_ = splitHour(hour_)
           data.calendar.insertNewTask(hour_, day_, name_, desc_, course_, status_)
-          msg = " >> Info: Tarea almacenada {}/{}/{}  {}:00".format(str(day_), str(month_), str(year_), str(hour_))
-        else:
-          msg = " >> Error: La fecha {} no tiene el formato correcto".format(date_)
-      else:  
-        msg = " >> Error: El carnet no existe"
-    else:
-      msg = " >> Error: Verifique sus datos"
+          return " >> Info: Tarea almacenada {}/{}/{}  {}:00".format(str(day_), str(month_), str(year_), str(hour_))
+        except:
+          print("En el calendario")
+          return " >> Error: Acceso invalido a meses"
+      else:
+        return " >> Error: La fecha {} no tiene el formato correcto".format(date_)
+    else:  
+      return " >> Error: El carnet no existe"
+  else:
+    return " >> Error: Verifique sus datos"
 
-    return jsonify({ "response" : msg})
-  except:
-    return jsonify({ "response" : "Something goes wrong, verify your data"})
-
-@app.route("/recordatorios", methods=["UPDATE"])
+@app.route("/recordatorios", methods=["PUT"])
 def taskUpdate():
   try:
     data = request.get_json(force=True)
