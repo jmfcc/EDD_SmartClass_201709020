@@ -1,8 +1,13 @@
 import os
 
 def getRoute():
-    ruta = os.path.dirname(os.path.abspath(__file__))
-    return ruta+"\\img\\"
+    # ruta = os.path.dirname(os.path.abspath(__file__)) # Para la ruta del script en ejecución
+    desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
+    directory = "Reportes_F2"
+    fullDir = os.path.join(desktop,directory)
+    if not os.path.isdir(fullDir):
+        os.mkdir(fullDir)
+    return fullDir
 
 # -------------------------------------------------------------
 # --------             GRAFICAR ARBOL AVL             ---------
@@ -11,7 +16,7 @@ def getRoute():
 def graphTreeAVL(root_):
     print("Funcion graficar arbol")
     
-    content = ["digraph G{\n\tnode [shape=circle];\n", ""]
+    content = ["digraph G{\n\tnode [shape=box];\n", ""]
 
     if root_.Root != None:
         traversingTreeAVL(root_.Root, content)
@@ -22,13 +27,13 @@ def graphTreeAVL(root_):
     content[0] += content[1] + "\n}"
 
     print(getRoute())
-    f = open(getRoute()+'grafoAVL.dot', 'w', encoding="utf8")
+    f = open(os.path.join(getRoute(),'grafoAVL.dot'), 'w', encoding="utf8")
     try:
         f.write(content[0])
     finally:
         f.close()
 
-    prog = "dot -Tsvg "+ getRoute() + "grafoAVL.dot -o "+getRoute()+"grafoAVL.svg"
+    prog = "dot -Tsvg "+ getRoute() + "\\grafoAVL.dot -o "+getRoute()+"\\grafoAVL.svg"
     os.system(prog)
     
     print("El arbol avl fue generado")
@@ -71,13 +76,13 @@ def graphDMatrix(dmatrix):
 
     content[0] += content[1] + content[5] + content[4] + content[7] + content[2] + content[3] + content[6] + "\n}"
 
-    f = open(getRoute()+'grafoDispMatrix.dot', 'w', encoding="utf8")
+    f = open(getRoute()+'\\grafoDispMatrix.dot', 'w', encoding="utf8")
     try:
         f.write(content[0])
     finally:
         f.close()
 
-    prog = "dot -Tsvg "+ getRoute() + "grafoDispMatrix.dot -o "+getRoute()+"grafoDispMatrix.svg"
+    prog = "dot -Tsvg "+ getRoute() + "\\grafoDispMatrix.dot -o "+getRoute()+"\\grafoDispMatrix.svg"
     os.system(prog)
     
     print("El grafo fue generado")
@@ -154,13 +159,13 @@ def graphDoubleList(linkedlist, data):
 
     content += "\n}"
 
-    f = open(getRoute()+'grafoLinkedL.dot', 'w', encoding="utf8")
+    f = open(getRoute()+'\\grafoLinkedL.dot', 'w', encoding="utf8")
     try:
         f.write(content)
     finally:
         f.close()
 
-    prog = "dot -Tsvg "+ getRoute() + "grafoLinkedL.dot -o "+getRoute()+"grafoLinkedL.svg"
+    prog = "dot -Tsvg "+ getRoute() + "\\grafoLinkedL.dot -o "+getRoute()+"\\grafoLinkedL.svg"
     os.system(prog)
     
     print("El grafo fue generado")
