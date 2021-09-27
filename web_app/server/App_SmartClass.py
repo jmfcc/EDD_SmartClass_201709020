@@ -106,7 +106,7 @@ def loadFile():
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
-@app.route("/reporte", methods=["GET"]) ###############################################
+@app.route("/reporte", methods=["GET"])
 def report():
   try:
     data = request.get_json(force=True)
@@ -174,7 +174,26 @@ def report():
       else:
         msg = " >> Error: No hay registros en pensum"
     elif type_ == 4: # B-TREE COURSES
-      pass
+      cardnumber_ = data["carnet"]
+      year_ = int(data["año"])
+      semester_ = int(data["semestre"])
+      if isValid(cardnumber_, year_, semester_):
+        if records.searchStudent(cardnumber_):
+          data = records.getStudent(cardnumber_) # NodeStudent
+          if not data.years.isEmpty() and data.years.searchYear(year_):
+            data = data.years.getYear(year_) # NodeYear
+            if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
+              data = data.semesters.getSemester(semester_) # NodeSemester
+              graphBTree(data.courses, "StudentCourses")
+              msg = " >> Info: El arbol de cursos ha sido generado"
+            else:
+              msg = " >> Error: No hay registros del semestre solicitado"
+          else:
+            msg = " >> Error: No hay registros del año solicitado"
+        else:
+          msg = " >> Error: No hay registros del carnet solicitado"
+      else:
+        msg = " >> Error: Verifique sus datos"
     return jsonify({ "response" : msg })
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
@@ -484,33 +503,71 @@ def taskDelete():
 # ---------------------------------------------------------------------------------------------------------------------
 # ---                                          CRUD CURSOS                                                          ---
 # ---------------------------------------------------------------------------------------------------------------------
-@app.route("/cursosEstudiante", methods=["POST"])  ########################################
+@app.route("/cursosEstudiante", methods=["POST"])
 def courseStudentInsert():
   try:
     data = request.get_json(force=True)
     studentsList = data["estudiantes"]
     msg = "Insertando cursos de estudiantes"
     if isinstance(studentsList, list):
+      # print("si es lista de estudiantes")
       for studData in studentsList:
         cardnumber_ = studData["carnet"]
         years_ = studData["años"]
         if isinstance(years_, list):
+          # print("si es lista de años", cardnumber_)
           for yearData in years_:
-            year_ = yearData["año"]
+            year_ = int(yearData["año"])
             semesters_ = yearData["semestres"]
             if isinstance(semesters_, list):
+              # print("si es lista de semestres", year_)
               for semestData in semesters_:
-                semester_ = semestData["semestre"]
-                courses_ = semestData["cursos"]
-                if isinstance(courses_, list):
-                  for courseData in courses_:
-                    code_ = courseData["codigo"]
-                    name_ = courseData["nombre"]
-                    credits_ = courseData["creditos"]
-                    pre_code_ = courseData["prerequisitos"]
-                    require_ = courseData["obligatorio"]
+                semester_ = int(semestData["semestre"])
+                if semester_ < 3 and semester_ > 0:
+                  courses_ = semestData["cursos"]
+                  if isinstance(courses_, list):
+                    # print("si es lista de cursos")
+                    for courseData in courses_:
+                      code_ = courseData["codigo"]
+                      name_ = courseData["nombre"]
+                      credits_ = courseData["creditos"]
+                      pre_code_ = courseData["prerequisitos"]
+                      require_ = courseData["obligatorio"]
+                      if isValid(cardnumber_, year_, semester_, code_, name_, credits_, require_):
+                        if records.searchStudent(cardnumber_):
+                          data = records.getStudent(cardnumber_) # NodeStudent
+                          try:
+                            if not data.years.isEmpty() and data.years.searchYear(year_):
+                              data = data.years.getYear(year_) # NodeYear
+                            else:
+                              data.years.insertYear(year_)
+                              data = data.years.getYear(year_) # NodeYear
+                          except:
+                            # print("Tronó en la lista años")
+                            msg = " >> Error: Acceso invalido a lista años"
+                          try:
+                            if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
+                              data = data.semesters.getSemester(semester_) # NodeSemester
+                            else:
+                              data.semesters.insertSemester(semester_)
+                              data = data.semesters.getSemester(semester_) # NodeSemester
+                          except:
+                            # print("Tronó en la lista semestres")
+                            msg = " >> Error: Acceso invalido a lista años"
+                          try:
+                            data.courses.insertData(code_, name_, credits_, pre_code_, require_)
+                            # print("Se inserto ---------------------")
+                            msg = " >> Info: Datos almacenados"
+                          except:
+                            msg = " >> Error: Inserción Fallida"
+                        else:  
+                          msg = " >> Error: El carnet no existe"
+                      else:
+                        msg = " >> Error: Verifique sus datos"
+                  else:
+                    msg = " >> Error: Se esperaba una lista de cursos"
                 else:
-                  msg = " >> Error: Se esperaba una lista de cursos"
+                  msg = " >> Error: El semestre está fuera de rango"
             else:
               msg = " >> Error: Se esperaba una lista de semestres"
         else:
