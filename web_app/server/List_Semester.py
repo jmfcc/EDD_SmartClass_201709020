@@ -1,9 +1,11 @@
+from Courses_Class import Courses_B
+
 class NodeSemester:
 
     def __init__(self, semester):
         self.semester = semester
         #SpecialPointer
-        self.courses = None  # Not implemented
+        self.courses = None
         #Pointer
         self.next = None
     
@@ -18,6 +20,8 @@ class ListSemester:
     
     def insertSemester(self, sem):
         newNode = NodeSemester(sem)
+        newCoursesTree = Courses_B()
+        newNode.courses = newCoursesTree
         if self.isEmpty():
             self.head = newNode
         else:
