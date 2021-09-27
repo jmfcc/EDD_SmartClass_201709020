@@ -56,7 +56,78 @@ def traversingTreeAVL(root_,content):
 # --------              GRAFICAR ARBOL B              ---------
 # -------------------------------------------------------------
 
+def graphBTree(btree, name_):
+    graphic = ["digraph ArbolB{\n", "", ""]
+    graphic[0] += "\n\trankdir=TB;\n"
+    graphic[0] += '\tnode[color="orange", fillcolor=lightgray, shape=record];\n'
+    graphic[0] += '\tgraph[splines=compound];\n'
 
+    traversingBTreeNodes(btree.root, graphic)
+    traversingBTreeEdges(btree.root, graphic)
+
+    graphic[0] += graphic[1] + graphic[2] +"\n}\n"
+
+    f = open(getRoute()+'\\grafoBTree_{}.dot'.format(name_), 'w', encoding="utf8")
+    # f = open('grafoB.dot', 'w', encoding="utf8")
+    try:
+        f.write(graphic[0])
+    finally:
+        f.close()
+
+    prog = "dot -Tsvg "+ getRoute() + "\\grafoBTree_"+name_+".dot -o "+getRoute()+"\\grafoBTree_"+name_+".svg"
+    # prog = "dot -Tsvg grafoB.dot -o grafoB.svg"
+    os.system(prog)
+    
+    print("El arbol b fue generado")
+
+def traversingBTreeNodes(page_, graphic):
+    nodes_ = 0
+    count = 0
+    if page_ != None:
+        nodes_ = 0
+        for i in range(page_.getCount()):
+            if page_.getCode(i) != None:
+                nodes_ += 1
+                if i != 0:
+                    graphic[1] += "|"
+                if nodes_ == 1:
+                    graphic[1] += '\n\tn{}[label="<f0> |'.format(str(page_.getCode(i)))
+                if i == 0:
+                    graphic[1] += '<f{}>{}\\n{}|<f{}>'.format(str(i+1),str(page_.getCode(i)),page_.getName(i),str(i+2))
+                    count = 3
+                else:
+                    graphic[1] += '<f{}>{}\\n{}|<f{}>'.format(str(count),str(page_.getCode(i)),page_.getName(i),str(count+1))
+                    count+=2
+                
+                if i == page_.getCount()-1:
+                    count = 0
+                    graphic[1] += '", group=0];\n'
+        traversingBTreeNodes(page_.getPointer(0), graphic)
+        traversingBTreeNodes(page_.getPointer(1), graphic)
+        traversingBTreeNodes(page_.getPointer(2), graphic)
+        traversingBTreeNodes(page_.getPointer(3), graphic)
+        traversingBTreeNodes(page_.getPointer(4), graphic)
+
+def traversingBTreeEdges(page_, graphic):
+    if page_ != None:
+        if page_.getCode(0) != None:
+            # if page_.getCode(0) != "":
+            if page_.getPointer(0) != None and page_.getPointer(0).getCode(0) != None:
+                graphic[2] += '\n\tn{}:f0-> n{}'.format(str(page_.getCode(0)),str(page_.getPointer(0).getCode(0)))
+            if page_.getPointer(1) != None and page_.getPointer(1).getCode(0) != None:
+                graphic[2] += '\n\tn{}:f2-> n{}'.format(str(page_.getCode(0)),str(page_.getPointer(1).getCode(0)))
+            if page_.getPointer(2) != None and page_.getPointer(2).getCode(0) != None:
+                graphic[2] += '\n\tn{}:f4-> n{}'.format(str(page_.getCode(0)),str(page_.getPointer(2).getCode(0)))
+            if page_.getPointer(3) != None and page_.getPointer(3).getCode(0) != None:
+                graphic[2] += '\n\tn{}:f6-> n{}'.format(str(page_.getCode(0)),str(page_.getPointer(3).getCode(0)))
+            if page_.getPointer(4) != None and page_.getPointer(4).getCode(0) != None:
+                graphic[2] += '\n\tn{}:f8-> n{}'.format(str(page_.getCode(0)),str(page_.getPointer(4).getCode(0)))
+        
+        traversingBTreeEdges(page_.getPointer(0), graphic)
+        traversingBTreeEdges(page_.getPointer(1), graphic)
+        traversingBTreeEdges(page_.getPointer(2), graphic)
+        traversingBTreeEdges(page_.getPointer(3), graphic)
+        traversingBTreeEdges(page_.getPointer(4), graphic)
 
 # -------------------------------------------------------------
 # --------          GRAFICAR MATRIZ DISPERSA          ---------
