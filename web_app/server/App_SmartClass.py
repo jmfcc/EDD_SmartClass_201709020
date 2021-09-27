@@ -2,12 +2,13 @@ import os
 from flask import Flask, json, jsonify, request, Response
 from flask_cors import CORS
 from Student_AVL import StudentAVL
-from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix
+from Courses_Class import Courses_B
+from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix, graphBTree
 from analyzers.Syntactic import parser
 from analyzers.Syntactic import user_list, task_list
-from List_Month import ListMonth
 
 records = StudentAVL()
+pensum = Courses_B()
 
 app = Flask(__name__)
 CORS(app)
@@ -167,7 +168,11 @@ def report():
       else:
         msg = " >> Error: Verifique sus datos"
     elif type_ == 3: # B-TREE PENSUM
-      pass
+      if not pensum.isEmpty(pensum.root):
+        graphBTree(pensum, "Pensum")
+        msg = " >> Info: Arbol B de pensum generado"
+      else:
+        msg = " >> Error: No hay registros en pensum"
     elif type_ == 4: # B-TREE COURSES
       pass
     return jsonify({ "response" : msg })
@@ -480,20 +485,71 @@ def taskDelete():
 # ---                                          CRUD CURSOS                                                          ---
 # ---------------------------------------------------------------------------------------------------------------------
 @app.route("/cursosEstudiante", methods=["POST"])  ########################################
-def courseInsert():
+def courseStudentInsert():
   try:
     data = request.get_json(force=True)
-    cardnumber_ = data["Carnet"]
-    name_ = data["Nombre"]
-    desc_ = data["Descripcion"]
-    course_ = data["Materia"]
-    date_ = data["Fecha"]
-    hour_ = data["Hora"]
-    status_ = data["Estado"]
+    studentsList = data["estudiantes"]
+    msg = "Insertando cursos de estudiantes"
+    if isinstance(studentsList, list):
+      for studData in studentsList:
+        cardnumber_ = studData["carnet"]
+        years_ = studData["años"]
+        if isinstance(years_, list):
+          for yearData in years_:
+            year_ = yearData["año"]
+            semesters_ = yearData["semestres"]
+            if isinstance(semesters_, list):
+              for semestData in semesters_:
+                semester_ = semestData["semestre"]
+                courses_ = semestData["cursos"]
+                if isinstance(courses_, list):
+                  for courseData in courses_:
+                    code_ = courseData["codigo"]
+                    name_ = courseData["nombre"]
+                    credits_ = courseData["creditos"]
+                    pre_code_ = courseData["prerequisitos"]
+                    require_ = courseData["obligatorio"]
+                else:
+                  msg = " >> Error: Se esperaba una lista de cursos"
+            else:
+              msg = " >> Error: Se esperaba una lista de semestres"
+        else:
+          msg = " >> Error: Se esperaba una lista de años"
+    else:
+      msg = " >> Error: Se esperaba una lista de estudiantes"
     #Validation of type -----------------------------------------------
     #     ----- NOT IMPLEMENTED -----------
     #     ----- NOT IMPLEMENTED -----------
-    return jsonify({ "response" : "I'm will add a task for student with cardnumber:" + cardnumber_ })
+    return jsonify({ "response" : msg})
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+@app.route("/cursosPensum", methods=["POST"])
+def coursePensumInsert():
+  try:
+    data = request.get_json(force=True)
+    courses_ = data["cursos"]
+    msg = "Insertando curso pensum"
+    allOk = 0
+    if isinstance(courses_, list):
+      for courseData in courses_:
+        code_ = courseData["codigo"]
+        name_ = courseData["nombre"]
+        credits_ = courseData["creditos"]
+        pre_code_ = courseData["prerequisitos"]
+        require_ = courseData["obligatorio"]
+        if isValid(code_, name_, credits_, require_):
+          pensum.insertData(code_, name_, credits_, pre_code_, require_)
+        else:
+          allOk += 1
+      if allOk == 0:
+        msg = " >> Info: La carga de cursos ha sido completada"
+      else:
+        msg = " >> Error: Se registraron {} errores".format(str(allOk))
+    else:
+      msg = " >> Error: Se esperaba una lista de estudiantes"
+    
+    return jsonify({ "response" : msg})
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
