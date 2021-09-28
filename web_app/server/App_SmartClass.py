@@ -1,5 +1,6 @@
 import os
-from flask import Flask, json, jsonify, request, Response
+# import json
+from flask import Flask, json, jsonify, request
 from flask_cors import CORS
 from Student_AVL import StudentAVL
 from Courses_Class import Courses_B
@@ -51,6 +52,11 @@ def uploadStudentFile(ruta_):
 
   parser.parse(mensaje)
 
+def readJsonFile(ruta_):
+  file = open(ruta_, "r", encoding="utf8")
+  dataFile = json.load(file)
+  # print(type(dataFile))
+  return dataFile
 
 # #####################################################################################################################
 # ########                                              ENDPOINTS                                              ########
@@ -60,7 +66,7 @@ def uploadStudentFile(ruta_):
 def helloWorld():
   return "Hello, cross-origin-world!"
 
-@app.route("/carga", methods=["POST"]) ################################################
+@app.route("/carga", methods=["POST"]) 
 def loadFile():
   try:
     data = request.get_json(force=True)
@@ -97,7 +103,14 @@ def loadFile():
         elif type_ == "recordatorio":
           pass
         elif type_ == "curso":
-          pass
+          dataload = readJsonFile(path_)
+          kdata = dataload.keys()
+          if "estudiantes" in kdata and len(kdata)==1:
+            msg = saveDataCourse(dataload)
+          elif "cursos" in kdata and len(kdata)==1:
+            msg = saveDataPensum(dataload)
+          else:
+            msg = " >> Error: Formato inválido"
         else:
           msg = " >> Error: No se puede reconocer el tipo solicitado"
       else:
@@ -507,111 +520,125 @@ def taskDelete():
 def courseStudentInsert():
   try:
     data = request.get_json(force=True)
-    studentsList = data["estudiantes"]
-    msg = "Insertando cursos de estudiantes"
-    if isinstance(studentsList, list):
-      # print("si es lista de estudiantes")
-      for studData in studentsList:
-        cardnumber_ = studData["carnet"]
-        years_ = studData["años"]
-        if isinstance(years_, list):
-          # print("si es lista de años", cardnumber_)
-          for yearData in years_:
-            year_ = int(yearData["año"])
-            semesters_ = yearData["semestres"]
-            if isinstance(semesters_, list):
-              # print("si es lista de semestres", year_)
-              for semestData in semesters_:
-                semester_ = int(semestData["semestre"])
-                if semester_ < 3 and semester_ > 0:
-                  courses_ = semestData["cursos"]
-                  if isinstance(courses_, list):
-                    # print("si es lista de cursos")
-                    for courseData in courses_:
-                      code_ = courseData["codigo"]
-                      name_ = courseData["nombre"]
-                      credits_ = courseData["creditos"]
-                      pre_code_ = courseData["prerequisitos"]
-                      require_ = courseData["obligatorio"]
-                      if isValid(cardnumber_, year_, semester_, code_, name_, credits_, require_):
-                        if records.searchStudent(cardnumber_):
-                          data = records.getStudent(cardnumber_) # NodeStudent
-                          try:
-                            if not data.years.isEmpty() and data.years.searchYear(year_):
-                              data = data.years.getYear(year_) # NodeYear
-                            else:
-                              data.years.insertYear(year_)
-                              data = data.years.getYear(year_) # NodeYear
-                          except:
-                            # print("Tronó en la lista años")
-                            msg = " >> Error: Acceso invalido a lista años"
-                          try:
-                            if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
-                              data = data.semesters.getSemester(semester_) # NodeSemester
-                            else:
-                              data.semesters.insertSemester(semester_)
-                              data = data.semesters.getSemester(semester_) # NodeSemester
-                          except:
-                            # print("Tronó en la lista semestres")
-                            msg = " >> Error: Acceso invalido a lista años"
-                          try:
-                            data.courses.insertData(code_, name_, credits_, pre_code_, require_)
-                            # print("Se inserto ---------------------")
-                            msg = " >> Info: Datos almacenados"
-                          except:
-                            msg = " >> Error: Inserción Fallida"
-                        else:  
-                          msg = " >> Error: El carnet no existe"
-                      else:
-                        msg = " >> Error: Verifique sus datos"
-                  else:
-                    msg = " >> Error: Se esperaba una lista de cursos"
-                else:
-                  msg = " >> Error: El semestre está fuera de rango"
-            else:
-              msg = " >> Error: Se esperaba una lista de semestres"
-        else:
-          msg = " >> Error: Se esperaba una lista de años"
-    else:
-      msg = " >> Error: Se esperaba una lista de estudiantes"
-    #Validation of type -----------------------------------------------
-    #     ----- NOT IMPLEMENTED -----------
-    #     ----- NOT IMPLEMENTED -----------
+    msg = saveDataCourse(data)
     return jsonify({ "response" : msg})
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+def saveDataCourse(data_):
+  studentsList = data_["estudiantes"]
+  msg = "Insertando cursos de estudiantes"
+  countErr = 0
+  if isinstance(studentsList, list):
+    # print("si es lista de estudiantes")
+    for studData in studentsList:
+      cardnumber_ = studData["carnet"]
+      years_ = studData["años"]
+      if isinstance(years_, list):
+        # print("si es lista de años", cardnumber_)
+        for yearData in years_:
+          year_ = int(yearData["año"])
+          semesters_ = yearData["semestres"]
+          if isinstance(semesters_, list):
+            # print("si es lista de semestres", year_)
+            for semestData in semesters_:
+              semester_ = int(semestData["semestre"])
+              if semester_ < 3 and semester_ > 0:
+                courses_ = semestData["cursos"]
+                if isinstance(courses_, list):
+                  # print("si es lista de cursos")
+                  for courseData in courses_:
+                    code_ = courseData["codigo"]
+                    name_ = courseData["nombre"]
+                    credits_ = courseData["creditos"]
+                    pre_code_ = courseData["prerequisitos"]
+                    require_ = courseData["obligatorio"]
+                    if isValid(cardnumber_, year_, semester_, code_, name_, credits_, require_):
+                      if records.searchStudent(cardnumber_):
+                        data = records.getStudent(cardnumber_) # NodeStudent
+                        try:
+                          if not data.years.isEmpty() and data.years.searchYear(year_):
+                            data = data.years.getYear(year_) # NodeYear
+                          else:
+                            data.years.insertYear(year_)
+                            data = data.years.getYear(year_) # NodeYear
+                        except:
+                          # print("Tronó en la lista años")
+                          msg = " >> Error: Acceso invalido a lista años"
+                        try:
+                          if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
+                            data = data.semesters.getSemester(semester_) # NodeSemester
+                          else:
+                            data.semesters.insertSemester(semester_)
+                            data = data.semesters.getSemester(semester_) # NodeSemester
+                        except:
+                          # print("Tronó en la lista semestres")
+                          msg = " >> Error: Acceso invalido a lista años"
+                        try:
+                          data.courses.insertData(code_, name_, credits_, pre_code_, require_)
+                          # print("Se inserto ---------------------")
+                          msg = " >> Info: Datos almacenados"
+                        except:
+                          msg = " >> Error: Inserción Fallida"
+                          countErr += 1
+                      else:  
+                        msg = " >> Error: El carnet no existe"
+                        countErr += 1
+                    else:
+                      msg = " >> Error: Verifique sus datos"
+                      countErr += 1
+                else:
+                  msg = " >> Error: Se esperaba una lista de cursos"
+                  countErr += 1
+              else:
+                msg = " >> Error: El semestre está fuera de rango"
+                countErr += 1
+          else:
+            msg = " >> Error: Se esperaba una lista de semestres"
+            countErr += 1
+      else:
+        msg = " >> Error: Se esperaba una lista de años"
+        countErr += 1
+  else:
+    msg = " >> Error: Se esperaba una lista de estudiantes"
+    countErr += 1
+  if countErr != 0:
+    return " >> Error: Se registraron {} errores".format(str(countErr))
+  return msg
 
 @app.route("/cursosPensum", methods=["POST"])
 def coursePensumInsert():
   try:
     data = request.get_json(force=True)
-    courses_ = data["cursos"]
-    msg = "Insertando curso pensum"
-    allOk = 0
-    if isinstance(courses_, list):
-      for courseData in courses_:
-        code_ = courseData["codigo"]
-        name_ = courseData["nombre"]
-        credits_ = courseData["creditos"]
-        pre_code_ = courseData["prerequisitos"]
-        require_ = courseData["obligatorio"]
-        if isValid(code_, name_, credits_, require_):
-          pensum.insertData(code_, name_, credits_, pre_code_, require_)
-        else:
-          allOk += 1
-      if allOk == 0:
-        msg = " >> Info: La carga de cursos ha sido completada"
-      else:
-        msg = " >> Error: Se registraron {} errores".format(str(allOk))
-    else:
-      msg = " >> Error: Se esperaba una lista de estudiantes"
+    msg = saveDataPensum(data)
     
     return jsonify({ "response" : msg})
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
+def saveDataPensum(data_):
+  courses_ = data_["cursos"]
+  msg = "Insertando curso pensum"
+  allOk = 0
+  if isinstance(courses_, list):
+    for courseData in courses_:
+      code_ = courseData["codigo"]
+      name_ = courseData["nombre"]
+      credits_ = courseData["creditos"]
+      pre_code_ = courseData["prerequisitos"]
+      require_ = courseData["obligatorio"]
+      if isValid(code_, name_, credits_, require_):
+        pensum.insertData(code_, name_, credits_, pre_code_, require_)
+      else:
+        allOk += 1
+    if allOk == 0:
+      msg = " >> Info: La carga de cursos ha sido completada"
+    else:
+      msg = " >> Error: Se registraron {} errores".format(str(allOk))
+  else:
+    msg = " >> Error: Se esperaba una lista de estudiantes"
 
-
+  return msg
 
 if __name__ == "__main__":
   app.run("localhost", port=3000)
