@@ -67,8 +67,59 @@ class StudentAVL:
 
         return root
 
-    def delete_student(self, cardnumber):
-        pass
+    def delete(self, cardnumber_):
+        self.Root = self.delete_search(self.Root, cardnumber_)
+
+    def delete_search(self, root_, cardnumber_):
+        if root_ is not None:
+            if cardnumber_ == root_.cardnumber:
+                if root_.left is None and root_.right is None:
+                    root_ =  None
+                elif root_.left is not None and root_.right is None:
+                    toDel_, replace = self.search_right_replace(root_.left)
+                    if not toDel_:
+                        replace.left = root_.left
+                    root_ = replace
+                elif root_.left is None and root_.right is not None:
+                    toDel_, replace = self.search_left_replace(root_.right)
+                    if not toDel_:
+                        replace.right = root_.right
+                    root_ = replace
+                else:
+                    toDel_, replace = self.search_right_replace(root_.left)
+                    if not toDel_:
+                        print(replace.cardnumber)
+                        replace.left = root_.left
+                        replace.right = root_.right
+                    root_ = replace
+            else:
+                if cardnumber_ < root_.cardnumber:
+                    root_.left = self.delete_search(root_.left, cardnumber_)
+                else:
+                    root_.right = self.delete_search(root_.right, cardnumber_)
+        return root_
+        
+    def search_right_replace(self, root_):
+        replace_ = None
+        toDel = False
+        if root_.right is not None:
+            toDel, replace_ = self.search_right_replace(root_.right)
+            if toDel:
+                root_.right = root_.right.left
+            return False, replace_
+        else:
+            return True, root_
+        
+    def search_left_replace(self, root_):
+        replace_ = None
+        toDel = False
+        if root_.left is not None:
+            toDel, replace_ = self.search_left_replace(root_.left)
+            if toDel:
+                root_.left = root_.left.right
+            return False, replace_
+        else:
+            return True, root_
 
     #Rotations ------------------------------------------------------------------------
     def RI(self, node):
@@ -164,6 +215,7 @@ class StudentAVL:
 # studentTree.insert(202001808, 0, "Fabian", "Sistemas", "fabian@gmail.com", "asdf", 100, 25)
 # studentTree.insert(202007708, 0, "Melchor", "Sistemas", "melchor@gmail.com", "asdf", 100, 25)
 # studentTree.insert(201904442, 0, "Rigoberto", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
+# studentTree.insert(200504442, 0, "Rigoberto", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
 
 # studentTree.in_orden()
 # print("----------------------------------------")
@@ -171,7 +223,12 @@ class StudentAVL:
 # # print("----------------------------------------")
 # # studentTree.post_orden()
 # print()
-
+# studentTree.delete(202007708)
+# studentTree.delete(201709283)
+# studentTree.delete(201904442)
+# studentTree.delete(200504442)
+# studentTree.delete(200611000)
+# studentTree.delete(201709020)
 # record = studentTree.getStudent(202007708)
 # if record != None:
 #     print(record.email)
