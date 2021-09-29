@@ -41,12 +41,18 @@ def graphTreeAVL(root_):
 def traversingTreeAVL(root_,content):
     # print("Recorriendo")
     if root_ is not None:
-        content[1] += '\t"{}"[label=" {}\\n{}\\n{}"];\n'.format(str(hash(root_)),str(root_.cardnumber), root_.name, root_.carrer)
+        content[1] += '\t"{}"[label=" {}\\n{}\\n{}\\n{}"];\n'.format(str(hash(root_)),str(root_.cardnumber), root_.name, root_.carrer, root_.height)
 
         if root_.left is not None:
-            content[1] += '\t"{}" -> "{}";\n'.format(str(hash(root_)),str(hash(root_.left)))
+            content[1] += '\t"{}" -> "{}"[color=green, label=L];\n'.format(str(hash(root_)),str(hash(root_.left)))
+        else:
+            content[1] += '\t"{}" -> "nonL{}"[style=invis];\n'.format(str(hash(root_)),str(hash(root_)))
+            content[1] += '\t"nonL{}"[style=invis];\n'.format(str(hash(root_)))
         if root_.right is not None:
-            content[1] += '\t"{}" -> "{}";\n'.format(str(hash(root_)), str(hash(root_.right)))
+            content[1] += '\t"{}" -> "{}"[color=red, label=R];\n'.format(str(hash(root_)), str(hash(root_.right)))
+        else:
+            content[1] += '\t"{}" -> "nonR{}"[style=invis];\n'.format(str(hash(root_)),str(hash(root_)))
+            content[1] += '\t"nonR{}"[style=invis];\n'.format(str(hash(root_)))
 
         traversingTreeAVL(root_.left, content)
         traversingTreeAVL(root_.right, content)
