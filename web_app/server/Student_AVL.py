@@ -80,32 +80,50 @@ class StudentAVL:
                     if not toDel_:
                         replace.left = root_.left
                     root_ = replace
+                    root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
                 elif root_.left is None and root_.right is not None:
                     toDel_, replace = self.search_left_replace(root_.right)
                     if not toDel_:
                         replace.right = root_.right
                     root_ = replace
+                    root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
                 else:
                     toDel_, replace = self.search_right_replace(root_.left)
+                    # print("Both", toDel_)
                     if not toDel_:
-                        print(replace.cardnumber)
+                        # print(replace.cardnumber)
                         replace.left = root_.left
-                        replace.right = root_.right
+                    replace.right = root_.right
                     root_ = replace
+                    root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
             else:
                 if cardnumber_ < root_.cardnumber:
                     root_.left = self.delete_search(root_.left, cardnumber_)
+                    if self.height(root_.left) == -1 and self.height(root_.right) > 0:
+                        root_ = self.RD(root_)
+                    elif (self.height(root_.right) - self.height(root_.left)) == 2 or (self.height(root_.right) - self.height(root_.left)) == -2:
+                        root_ = self.RD(root_)
+                    else:
+                        root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
                 else:
                     root_.right = self.delete_search(root_.right, cardnumber_)
+                    if self.height(root_.right) == -1 and self.height(root_.left) > 0:
+                        root_ = self.RI(root_)
+                    elif (self.height(root_.right) - self.height(root_.left)) == 2 or (self.height(root_.right) - self.height(root_.left)) == -2:
+                        root_ = self.RI(root_)
+                    else:
+                        root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
         return root_
         
     def search_right_replace(self, root_):
         replace_ = None
         toDel = False
         if root_.right is not None:
+            # print(root_.right.cardnumber)
             toDel, replace_ = self.search_right_replace(root_.right)
             if toDel:
                 root_.right = root_.right.left
+            root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
             return False, replace_
         else:
             return True, root_
@@ -117,9 +135,14 @@ class StudentAVL:
             toDel, replace_ = self.search_left_replace(root_.left)
             if toDel:
                 root_.left = root_.left.right
+            root_.height = self.Max(self.height(root_.left), self.height(root_.right)) + 1
             return False, replace_
         else:
             return True, root_
+
+    def balance(self, root_):
+        pass
+
 
     #Rotations ------------------------------------------------------------------------
     def RI(self, node):
@@ -215,30 +238,22 @@ class StudentAVL:
 # studentTree.insert(202001808, 0, "Fabian", "Sistemas", "fabian@gmail.com", "asdf", 100, 25)
 # studentTree.insert(202007708, 0, "Melchor", "Sistemas", "melchor@gmail.com", "asdf", 100, 25)
 # studentTree.insert(201904442, 0, "Rigoberto", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
-# studentTree.insert(200504442, 0, "Rigoberto", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
+# studentTree.insert(200504442, 0, "Rigoberto02", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
+# studentTree.insert(202005442, 0, "Rigoberto03", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
+# studentTree.insert(202054442, 0, "Rigoberto04", "Sistemas", "rigoberto@gmail.com", "asdf", 100, 25)
 
-# studentTree.in_orden()
-# print("----------------------------------------")
-# # studentTree.pre_orden()
-# # print("----------------------------------------")
-# # studentTree.post_orden()
-# print()
-# studentTree.delete(202007708)
-# studentTree.delete(201709283)
-# studentTree.delete(201904442)
-# studentTree.delete(200504442)
-# studentTree.delete(200611000)
+
+# studentTree.delete(201402113)
 # studentTree.delete(201709020)
-# record = studentTree.getStudent(202007708)
-# if record != None:
-#     print(record.email)
-#     record.name = "Modify On Extern Node"
-#     if record.years.head == None:
-#         print(" --- None Years Records ---")
-# else:
-#     print(" >> Error: 0 matches")
+# studentTree.delete(200504442)
+# studentTree.delete(202005442)
+# studentTree.delete(202054442)
 
-# print()
-# print("----------------------------------------")
+# studentTree.delete(201904442)
+# studentTree.delete(200611000)
+# studentTree.delete(202007708)
+# studentTree.delete(202001808)
+# studentTree.delete(201709283)
+
 # graphTreeAVL(studentTree)
 # # studentTree.in_orden()
