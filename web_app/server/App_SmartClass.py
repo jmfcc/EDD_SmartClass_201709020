@@ -278,13 +278,19 @@ def studentUpdate():
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
-@app.route("/estudiante", methods=["DELETE"])  ###########################################
+@app.route("/estudiante", methods=["DELETE"]) 
 def studentDelete():
   try:
     data = request.get_json(force=True)
     cardnumber_ = data["carnet"]
-    #Validation of type -----------------------------------------------
-    #     ----- NOT IMPLEMENTED -----------
+    msg = "Eliminando a un estudiante"
+    if isValid(cardnumber_):
+      if records.searchStudent(cardnumber_):
+        records.delete(cardnumber_)
+      else:
+        msg = " >> Error: El estudiante no existe"
+    else:
+      msg = " >> Error: Verifique sus datos"
     return jsonify({ "response" : "I'm deleting a student with cardnumber:" + cardnumber_ })
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
