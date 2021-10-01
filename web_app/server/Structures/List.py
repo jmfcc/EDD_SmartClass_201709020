@@ -34,3 +34,6 @@ class List:
             new_node.Previous = self.Last
             self.Last = new_node
 
+    def clear(self):
+        self.First = None
+        self.Last = None

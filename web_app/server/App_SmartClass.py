@@ -100,6 +100,8 @@ def loadFile():
             msg = " >> Info: Se han almacenado todos los registros de estudiantes y sus tareas"
           else:
             msg = " >> Info: Se han detectado ({}) errores de estudiantes y ({}) errores de tareas".format(str(countUerr), str(countTerr))
+          user_list.clear()
+          task_list.clear()
         elif type_ == "recordatorio":
           pass
         elif type_ == "curso":
