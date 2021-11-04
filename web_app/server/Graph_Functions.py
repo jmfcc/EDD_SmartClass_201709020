@@ -459,17 +459,17 @@ def graphRedCourses(root_, code_):
     name = "RedCursos"
 
     print(getRoute())
-    f = open(os.path.join(getRoute(),f'grafoAVL{name}.dot'), 'w', encoding="utf-8")
+    f = open(os.path.join(getRoute(),f'grafo{name}.dot'), 'w', encoding="utf-8")
     try:
         f.write(content[0])
     finally:
         f.close()
 
-    prog = "dot -Tsvg "+ getRoute() + f"\\grafoAVL{name}.dot -o "+getRoute()+ f"\\grafoAVL{name}.svg"
+    prog = "dot -Tsvg "+ getRoute() + f"\\grafo{name}.dot -o "+getRoute()+ f"\\grafo{name}.svg"
     os.system(prog)
     
-    print("El arbol avl fue generado")
-    return "El arbol avl fue generado"
+    print("La red del curso fue generado")
+    return "La red del curso fue generado"
 
 def structureRedC(root_,content, code_, group):
     # print("Recorriendo")
