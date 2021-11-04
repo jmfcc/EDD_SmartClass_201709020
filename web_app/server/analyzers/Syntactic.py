@@ -71,9 +71,9 @@ def p_item(t):
     elif t[3].lower() == "password":
         element_node.Password = t[5].replace('"', '').replace(' ', '')
     elif t[3].lower() == "creditos":
-        element_node.Creditos = t[5].replace('"', '')
+        element_node.Creditos = t[5]
     elif t[3].lower() == "edad":
-        element_node.Edad = t[5].replace('"', '')
+        element_node.Edad = t[5]
     elif t[3].lower() == "correo":
         element_node.Correo = t[5].replace('"', '').replace(' ', '')
     elif t[3].lower() == "descripcion":

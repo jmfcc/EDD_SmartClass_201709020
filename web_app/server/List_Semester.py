@@ -1,4 +1,5 @@
-from Courses_Class import Courses_B
+# from Courses_Class import Courses_B
+from CoursesAVL_Class import CoursesAVL
 
 class NodeSemester:
 
@@ -20,7 +21,8 @@ class ListSemester:
     
     def insertSemester(self, sem):
         newNode = NodeSemester(sem)
-        newCoursesTree = Courses_B()
+        newCoursesTree = CoursesAVL()
+        # newCoursesTree = Courses_B()
         newNode.courses = newCoursesTree
         if self.isEmpty():
             self.head = newNode

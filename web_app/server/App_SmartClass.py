@@ -4,12 +4,23 @@ from flask import Flask, json, jsonify, request
 from flask_cors import CORS
 from Student_AVL import StudentAVL
 from Courses_Class import Courses_B
-from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix, graphBTree
+from TablaHash import TablaHash
+from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix, graphBTree, graphHashTable, graphTreeAVLCourses, graphRedCourses
 from analyzers.Syntactic import parser
 from analyzers.Syntactic import user_list, task_list
 
+from flask_jwt import JWT, jwt_required, current_identity
+from werkzeug.security import safe_str_cmp
+
+from CryptDecrypt import applyHashing, encryptData, decryptData
+from CoursesAVL_Class import CoursesAVL
+
+
 records = StudentAVL()
-pensum = Courses_B()
+# pensum = Courses_B()
+pensum = CoursesAVL()
+notes = TablaHash()
+
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +31,7 @@ CORS(app)
 
 def isValid(*args):
   for val in args:
+    # print(type(val))
     if isinstance(val, int):
       if val < 0:
         return False
@@ -58,6 +70,130 @@ def readJsonFile(ruta_):
   # print(type(dataFile))
   return dataFile
 
+
+
+# #####################################################################################################################
+# ########                                        AUTHENTICATION JWT                                           ########
+# #####################################################################################################################
+
+class User(object):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+    def __str__(self):
+        return "User(id='%s')" % self.id
+
+users = [
+    User(1, 'user1', 'abcxyz'),
+    User(2, 'user2', 'abcxyz'),
+]
+
+username_table = {u.username: u for u in users}
+userid_table = {u.id: u for u in users}
+
+def authenticate(username, password):
+    user = username_table.get(username, None)
+    if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
+        return user
+
+def identity(payload):
+    user_id = payload['identity']
+    return userid_table.get(user_id, None)
+
+app.config['SECRET_KEY'] = 'super-secret'
+
+jwt = JWT(app, authenticate, identity)
+
+@app.route('/protected')
+@jwt_required()
+def protected():
+    return '%s' % current_identity
+
+# #####################################################################################################################
+# ########                                           ENDPOINTS-F3                                              ########
+# #####################################################################################################################
+
+@app.route("/login", methods=["POST"])
+def login():
+  data = request.get_json(force=True)
+  cardnumber_ = data["carnet"]
+  passw_ = data["password"]
+  
+  msg = {
+    "accesTkn":"",
+    "expiresIn":"",
+    "rol":"none"
+  }
+  if isValid(cardnumber_, passw_):
+    if cardnumber_=="admin" and  passw_=="admin":
+      msg = {
+        "accesTkn":"adminaccess",
+        "expiresIn":"5000",
+        "rol": "admin"
+      }
+    else:
+      if records.searchStudent(cardnumber_):
+        data = records.getStudent(cardnumber_)
+        if decryptData(data.password) == applyHashing(passw_.encode()):
+          msg = {
+            "accesTkn":"studaccess",
+            "expiresIn":"4000",
+            "rol": "student"
+          }
+  return jsonify(msg)
+
+@app.route("/notes", methods=["POST"])
+def notePost():
+  try:
+    data = request.get_json(force=True)
+    cardnumber_ = data["carnet"]
+    title_ = data["title"]
+    content_ = data["content"]
+    msg = "I'm saving a student note" 
+    #Validation of type -----------------------------------------------
+    if isValid(cardnumber_, title_, content_):
+      msg = noteInsert(cardnumber_, title_, content_)
+    return jsonify({ "response" : msg})
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+def noteInsert(cardnumber_, title_, content_):
+  try:
+    if records.searchStudent(cardnumber_):
+      notes.insert_new_note(cardnumber_, title_, content_)
+      return "Se ha guardado el apunte"
+    else:
+      return "Ah ocurrido un error, recargue la pagina e intentelo nuevamente"
+  except:
+    return "F, algo fallo"
+
+@app.route("/notes", methods=["GET"]) #-----------------------------------------
+def getNotes():
+  try:
+    data = request.get_json(force=True)
+    cardnumber_ = data["carnet"]
+    title_ = data["title"]
+    content_ = data["content"]
+    msg = "I'm saving a student note" 
+    #Validation of type -----------------------------------------------
+    if isValid(cardnumber_, title_, content_):
+      try:
+        if records.searchStudent(cardnumber_):
+          notes.insert_new_note(cardnumber_, title_, content_)
+          msg = "Se ha guardado el apunte"
+        else:
+          msg = "Ah ocurrido un error, recargue la pagina e intentelo nuevamente"
+      except:
+        msg = "F, algo fallo"
+    return jsonify({ "response" : msg})
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+
+
+
 # #####################################################################################################################
 # ########                                              ENDPOINTS                                              ########
 # #####################################################################################################################
@@ -80,6 +216,7 @@ def loadFile():
           uploadStudentFile(path_)
           aux = user_list.First
           countUerr = 0
+          print("ya pasa el ply")
           while aux is not None:
             m = saveDataStudent(aux.Carnet, aux.DPI, aux.Nombre, aux.Carrera, aux.Correo, aux.Password, aux.Creditos, aux.Edad)
             if "Error:" in m:
@@ -88,6 +225,7 @@ def loadFile():
             aux = aux.Next
           aux2 = task_list.First
           countTerr = 0
+          print("pasa el registro de estudiantes")
           while aux2 is not None:
             # print("--------------------------------------------------")
             # print("->",type(aux2.Carnet), "\n->", type(aux2.Nombre), "\n->", type(aux2.Descripcion), "\n->", type(aux2.Materia), "\n->", type(aux2.Fecha), "\n->", type(aux2.Hora), "\n->", type(aux2.Estado))
@@ -129,7 +267,8 @@ def report():
     #Validation of type -----------------------------------------------
     msg = "Try generate a report"
     if type_ == 0: # AVL REPORT
-      graphTreeAVL(records)
+      graphTreeAVL(records, False)
+      graphTreeAVL(records, True)
       msg = " >> Info: Arbol AVL de estudiantes generado exitosamente"
     elif type_ == 1: # DISP MATRIX TASK
       cardnumber_ = data["carnet"]
@@ -183,11 +322,12 @@ def report():
       else:
         msg = " >> Error: Verifique sus datos"
     elif type_ == 3: # B-TREE PENSUM
-      if not pensum.isEmpty(pensum.root):
-        graphBTree(pensum, "Pensum")
-        msg = " >> Info: Arbol B de pensum generado"
-      else:
-        msg = " >> Error: No hay registros en pensum"
+      msg = graphTreeAVLCourses(pensum, "Pensum")
+      # if not pensum.isEmpty(pensum.Root):
+        # graphBTree(pensum, "Pensum")
+      #   msg = " >> Info: Arbol B de pensum generado"
+      # else:
+      #   msg = " >> Error: No hay registros en pensum"
     elif type_ == 4: # B-TREE COURSES
       cardnumber_ = data["carnet"]
       year_ = int(data["año"])
@@ -199,7 +339,8 @@ def report():
             data = data.years.getYear(year_) # NodeYear
             if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
               data = data.semesters.getSemester(semester_) # NodeSemester
-              graphBTree(data.courses, "StudentCourses")
+              # graphBTree(data.courses, "StudentCourses")
+              graphTreeAVLCourses(data.courses, "StudentCourses")
               msg = " >> Info: El arbol de cursos ha sido generado"
             else:
               msg = " >> Error: No hay registros del semestre solicitado"
@@ -209,6 +350,9 @@ def report():
           msg = " >> Error: No hay registros del carnet solicitado"
       else:
         msg = " >> Error: Verifique sus datos"
+    elif type_ == 5:
+      code_ = data["codigo"]
+      msg = graphRedCourses(pensum, code_)
     return jsonify({ "response" : msg })
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
@@ -241,7 +385,15 @@ def saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_,
     if records.searchStudent(cardnumber_):
       return " >> Error: El carnet {} ya está registrado".format(cardnumber_)
     else:
+      # print("va a pasar el encriptado de password")
+      # print("pasa el encriptado de password")
+      dpi_ = encryptData(dpi_.encode())
+      name_ = encryptData(name_.encode())
+      email_ = encryptData(email_.encode())
+      passw_ = encryptData(applyHashing(passw_.encode()))
+      age_ = encryptData(str(age_).encode())
       records.insert(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
+      # notes.add_to_table(int(cardnumber_))
       return " >> Info: Datos del estudiante almacenados correctamente" 
   else:
     print("\n--",cardnumber_,"\n--", dpi_,"\n--", name_,"\n--", carrer_,"\n--", email_,"\n--", passw_,"\n--", credits_,"\n--", age_)
@@ -383,7 +535,7 @@ def saveDataTask(cardnumber_, name_, desc_, course_, date_, hour_, status_):
       else:
         return " >> Error: La fecha {} no tiene el formato correcto".format(date_)
     else:  
-      return " >> Error: El carnet no existe"
+      return " >> Error: El carnet no existe {}".format(str(cardnumber_))
   else:
     return " >> Error: Verifique sus datos"
 

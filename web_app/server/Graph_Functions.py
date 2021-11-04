@@ -1,9 +1,10 @@
 import os
+from CryptDecrypt import decryptData, decryptData_s
 
 def getRoute():
     # ruta = os.path.dirname(os.path.abspath(__file__)) # Para la ruta del script en ejecución
     desktop = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
-    directory = "Reportes_F2"
+    directory = "Reportes_F3"
     fullDir = os.path.join(desktop,directory)
     if not os.path.isdir(fullDir):
         os.mkdir(fullDir)
@@ -13,27 +14,35 @@ def getRoute():
 # --------             GRAFICAR ARBOL AVL             ---------
 # -------------------------------------------------------------
 
-def graphTreeAVL(root_):
+
+def graphTreeAVL(root_, viewdecript):
     print("Funcion graficar arbol")
     
     content = ["digraph G{\n\tnode [shape=box];\n", ""]
 
     if root_.Root != None:
-        traversingTreeAVL(root_.Root, content)
+        if viewdecript:
+            traversingTreeAVLDecrypt(root_.Root, content)
+        else:
+            traversingTreeAVL(root_.Root, content)
     else:
         print("El arbol está vacío")
         return
 
     content[0] += content[1] + "\n}"
 
+    name = "encrypt"
+    if viewdecript:
+        name = "decrypt"
+
     print(getRoute())
-    f = open(os.path.join(getRoute(),'grafoAVL.dot'), 'w', encoding="utf8")
+    f = open(os.path.join(getRoute(),f'grafoAVL{name}.dot'), 'w', encoding="utf-8")
     try:
         f.write(content[0])
     finally:
         f.close()
 
-    prog = "dot -Tsvg "+ getRoute() + "\\grafoAVL.dot -o "+getRoute()+"\\grafoAVL.svg"
+    prog = "dot -Tsvg "+ getRoute() + f"\\grafoAVL{name}.dot -o "+getRoute()+ f"\\grafoAVL{name}.svg"
     os.system(prog)
     
     print("El arbol avl fue generado")
@@ -41,7 +50,20 @@ def graphTreeAVL(root_):
 def traversingTreeAVL(root_,content):
     # print("Recorriendo")
     if root_ is not None:
-        content[1] += '\t"{}"[label=" {}\\n{}\\n{}\\n{}"];\n'.format(str(hash(root_)),str(root_.cardnumber), root_.name, root_.carrer, root_.height)
+        cardnumb = root_.cardnumber
+        dpi = root_.dpi
+        dpi = dpi[:8] + b"  ...  " + dpi[-8:]
+        name = root_.name
+        name = name[:8] + b"  ...  " + name[-8:]
+        carrer = root_.carrer
+        email = root_.email
+        email = email[:8] + b"  ...  " + email[-8:]
+        password = root_.password
+        password = password[:8] + b"  ...  " + password[-8:]
+        credits = root_.credits
+        age = root_.age
+        age = age[:8] + b"  ...  " + age[-8:]
+        content[1] += f'\t"{str(hash(root_))}"[label="Carnet: {cardnumb}\\nDPI: {dpi}\\nNombre: {name}\\nCarrera: {carrer}\\nEmail: {email}\\nPassword: {password}\\nCreditos: {credits}\\nEdad: {age}"];\n'
 
         if root_.left is not None:
             content[1] += '\t"{}" -> "{}"[color=green, label=L];\n'.format(str(hash(root_)),str(hash(root_.left)))
@@ -57,6 +79,98 @@ def traversingTreeAVL(root_,content):
         traversingTreeAVL(root_.left, content)
         traversingTreeAVL(root_.right, content)
 
+def traversingTreeAVLDecrypt(root_,content):
+    # print("Recorriendo")
+    if root_ is not None:
+        cardnumb = root_.cardnumber
+        dpi = root_.dpi
+        name = root_.name
+        carrer = root_.carrer
+        email = root_.email
+        password = root_.password
+        credits = root_.credits
+        age = root_.age
+        print("decrypt")
+        dpi = decryptData_s(dpi)
+        name = decryptData_s(name)
+        email = decryptData_s(email)
+        password = decryptData(password)
+        # print("en el slice")
+        password = password[:12]
+        age = decryptData_s(age)
+        content[1] += f'\t"{str(hash(root_))}"[label="Carnet: {cardnumb}\\nDPI: {dpi}\\nNombre: {name}\\nCarrera: {carrer}\\nEmail: {email}\\nPassword: {password}\\nCreditos: {credits}\\nEdad: {age}"];\n'
+
+        if root_.left is not None:
+            content[1] += '\t"{}" -> "{}"[color=green, label=L];\n'.format(str(hash(root_)),str(hash(root_.left)))
+        else:
+            content[1] += '\t"{}" -> "nonL{}"[style=invis];\n'.format(str(hash(root_)),str(hash(root_)))
+            content[1] += '\t"nonL{}"[style=invis];\n'.format(str(hash(root_)))
+        if root_.right is not None:
+            content[1] += '\t"{}" -> "{}"[color=red, label=R];\n'.format(str(hash(root_)), str(hash(root_.right)))
+        else:
+            content[1] += '\t"{}" -> "nonR{}"[style=invis];\n'.format(str(hash(root_)),str(hash(root_)))
+            content[1] += '\t"nonR{}"[style=invis];\n'.format(str(hash(root_)))
+
+        traversingTreeAVLDecrypt(root_.left, content)
+        traversingTreeAVLDecrypt(root_.right, content)
+
+
+# -------------------------------------------------------------
+# --------     ***GRAFICAR ARBOL AVL (Cursos)***      ---------
+# -------------------------------------------------------------
+
+def graphTreeAVLCourses(root_, name):
+    print("Funcion graficar arbol")
+    
+    content = ["digraph G{\n\tnode [shape=box];\n", ""]
+
+    if root_.Root != None:
+        traversingTreeAVLC(root_.Root, content)
+    else:
+        return "El arbol está vacío"
+
+    content[0] += content[1] + "\n}"
+
+    name = "Cursos"+name
+
+    print(getRoute())
+    f = open(os.path.join(getRoute(),f'grafoAVL{name}.dot'), 'w', encoding="utf-8")
+    try:
+        f.write(content[0])
+    finally:
+        f.close()
+
+    prog = "dot -Tsvg "+ getRoute() + f"\\grafoAVL{name}.dot -o "+getRoute()+ f"\\grafoAVL{name}.svg"
+    os.system(prog)
+    
+    print("El arbol avl fue generado")
+    return "El arbol avl fue generado"
+
+def traversingTreeAVLC(root_,content):
+    # print("Recorriendo")
+    if root_ is not None:
+        code = root_.code
+        name = root_.name
+        credits = root_.credits
+        pre_code = root_.pre_code
+        if pre_code == "":
+            pre_code = "----"
+        required = "Si" if root_.required else "No"
+        content[1] += f'\t"{str(hash(root_))}"[label="Codigo: {code}\\nNombre: {name}\\nCreditos: {credits}\\nPrerrequisitos: {pre_code}\\nObligatorio: {required}"];\n'
+
+        if root_.left is not None:
+            content[1] += '\t"{}" -> "{}"[color=green, label=L];\n'.format(str(hash(root_)),str(hash(root_.left)))
+        else:
+            content[1] += '\t"{}" -> "nonL{}"[style=invis];\n'.format(str(hash(root_)),str(hash(root_)))
+            content[1] += '\t"nonL{}"[style=invis];\n'.format(str(hash(root_)))
+        if root_.right is not None:
+            content[1] += '\t"{}" -> "{}"[color=red, label=R];\n'.format(str(hash(root_)), str(hash(root_.right)))
+        else:
+            content[1] += '\t"{}" -> "nonR{}"[style=invis];\n'.format(str(hash(root_)),str(hash(root_)))
+            content[1] += '\t"nonR{}"[style=invis];\n'.format(str(hash(root_)))
+
+        traversingTreeAVLC(root_.left, content)
+        traversingTreeAVLC(root_.right, content)
 
 # -------------------------------------------------------------
 # --------              GRAFICAR ARBOL B              ---------
@@ -267,3 +381,136 @@ def formattingData(data, aux):
     content += '\\nCurso: {}'.format(aux.course)
     content += '\\nEstado: {}'.format(aux.status)
     return content
+
+# -------------------------------------------------------------
+# ---------            GRAFICAR TABLA HASH            ---------
+# -------------------------------------------------------------
+
+def graphHashTable(hashTable):
+    print("Funcion graficar tabla hash")
+    
+    route_ = getRoute()
+    content = ["", "", ""]
+    content[0] = "digraph G{\n\tgraph[splines=compound];\n\tnode [shape=record];\n\trankdir=LR;\n"
+    
+    traversingHashTable(hashTable.hash_list, content)
+
+    content[0] += content[1] + content[2] + "\n}"
+
+    f = open(route_+'\\grafoTablaHash.dot', 'w', encoding="utf8")
+    try:
+        f.write(content[0])
+    finally:
+        f.close()
+
+    prog = "dot -Tsvg "+ route_ + "\\grafoTablaHash.dot -o "+route_+"\\grafoTablaHash.svg"
+    os.system(prog)
+    
+    print("El grafo fue generado")
+
+def traversingHashTable(hash_list, content):
+    content[1] = "struct1 [label=\""
+    f_count = 0
+    init = True
+    for cell in hash_list:
+        if init:
+            init = False
+        else:
+            content[1] += "|"
+        if cell is not None:
+            content[1] += f"<f{f_count}>{cell.card_number}"
+            if cell.size != 0:
+                helperTraversingListHashTable(cell.head, content, f_count)
+                f_count += 1
+    content[1] += "\"];"
+def helperTraversingListHashTable(aux, content, id):
+    content[2] += ""
+    pos = 0
+    init = True
+    while aux is not None:
+        content[2] += f"\n\tn{id}_{pos}[label=\"Posición: {pos+1}\\nTítulo: {aux.title}\"]"
+        if init:
+            content[2] += f"\n\tstruct1:<f{id}> -> n{id}_{pos}:w"
+            init = False
+        else:
+            content[2] += f"\n\tn{id}_{pos-1} -> n{id}_{pos}"
+        pos += 1
+        aux = aux.Next
+
+# -------------------------------------------------------------
+# --------        GRAFICAR ARBOL AVL (Cursos)         ---------
+# -------------------------------------------------------------
+
+def graphRedCourses(root_, code_):
+    print("Funcion graficar red")
+    
+    # content = ["digraph G{\n\trankdir=LR;\n\tnode [shape=box];\n", [], []]
+    content = ["digraph G{\n\trankdir=LR;\n\tgraph[splines=compound];\n\tnode [shape=box];\n", [], []]
+
+    if root_.Root != None:
+        # print("No esta vacío")
+        n, m = structureRedC(root_, content, code_, 0)
+        print(n, m)
+    else:
+        return "El arbol está vacío"
+
+    content[0] += "".join(content[1]) + "\n}"
+
+    name = "RedCursos"
+
+    print(getRoute())
+    f = open(os.path.join(getRoute(),f'grafoAVL{name}.dot'), 'w', encoding="utf-8")
+    try:
+        f.write(content[0])
+    finally:
+        f.close()
+
+    prog = "dot -Tsvg "+ getRoute() + f"\\grafoAVL{name}.dot -o "+getRoute()+ f"\\grafoAVL{name}.svg"
+    os.system(prog)
+    
+    print("El arbol avl fue generado")
+    return "El arbol avl fue generado"
+
+def structureRedC(root_,content, code_, group):
+    # print("Recorriendo")
+    if root_.searchCourse(code_):
+        # print(f"encontrado: {code_}")
+        course = root_.getCourse(code_)
+
+        id_node = str(hash(course))
+        code = course.code
+        name = course.name
+        credits = course.credits
+        pre_code = course.pre_code
+        ini, lbl = "", 0
+        if pre_code:
+            listPreCode = []
+            if "," in pre_code:
+                listPreCode = pre_code.split(",")
+            else:
+                listPreCode.append(pre_code)
+            c = ["green", "blue", "red", "orange", "black"]
+            c_i = 0
+            for preCode in listPreCode:
+                ini, lbl = structureRedC(root_, content, preCode, group+1)
+    
+                if not id_node in content[2]:
+                    content[2].append(id_node)
+                    content[1].append(f'\t"{id_node}"[label="Codigo: {code}\\n{name}"];\n')
+                color = f"color={c[c_i]}, fontcolor={c[c_i]}"
+                print(color)
+                link = f'\t"{ini}":e -> "{id_node}":w[label=\"{lbl}\", {color}, group={group}];\n'
+                if not link in content[1]:
+                    if ini != "":
+                        content[1].append(link)
+                c_i += 1
+        else:
+            if not id_node in content[2]:
+                content[2].append(id_node)
+                content[1].append(f'\t"{id_node}"[label="Codigo: {code}\\nNombre: {name}"];\n')
+
+        return id_node, credits
+    else:
+        print(f"Codigo inexistente {code_}")
+
+
