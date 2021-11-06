@@ -1,0 +1,86 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-info fixed-top">
+    <a class="navbar-brand" href="#">
+        <i class="fas fa-brain"></i>
+        SMART CLASS
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+      aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse " id="navbarColor01">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/login">
+            <i class="fas fa-sign-in-alt"></i>
+            INICIAR SESION
+        </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/register">
+            <i class="far fa-address-card"></i>
+            REGISTRARSE
+        </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<br>
+<br>
+<br>
+<div class="row">
+    <div class="col-md-4 offset-md-2">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="login-header">REGISTRO</h2>
+
+                <form #frmRegister="ngForm" (ngSubmit)="onRegis(frmRegister)">
+
+                    <div class="form-group">
+                        <input name = "carnet" placeholder="CARNET" type="text" ngModel class="form-control" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <input name = "dpi" placeholder="DPI" type="text" ngModel class="form-control" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <input name = "nombre" placeholder="NOMBRE COMPLETO" type="text" class="form-control" ngModel required>
+                    </div>
+                    <div class="form-group">
+                        <input name = "carrera" placeholder="CARRERA" type="text" class="form-control" ngModel required>
+                    </div>
+                    <div class="form-group">
+                        <input name = "correo" placeholder="CORREO" type="email" class="form-control" ngModel required>
+                    </div>
+                    <div class="form-group">
+                        <input name = "password" placeholder="PASSWORD" type="password" class="form-control" ngModel required>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                <input name = "creditos" placeholder="CREDITOS" type="number" class="form-control" ngModel required>
+                            </div>
+                            <div class="col">
+                                <input name = "edad" placeholder="EDAD" type="number" class="form-control" ngModel required>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success btn-block" type="submit">
+                        REGISTRARSE
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-3 mt-auto">
+        <div *ngIf="studentsaved">
+            <div class="alert alert-success" role="alert">
+                {{msg.response}}
+              </div>
+        </div>
+        <div *ngIf="emptyInputs">
+            <div class="alert alert-danger" role="alert">
+                Error: Debe llenar todos los campos
+              </div>
+        </div>
+    </div>
+</div>

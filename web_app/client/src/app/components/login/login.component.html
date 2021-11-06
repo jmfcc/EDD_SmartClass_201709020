@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-info fixed-top">
+  <a class="navbar-brand" href="#">
+    <i class="fas fa-brain"></i>
+    SMART CLASS
+</a>
+    <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarColor01"
+      aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  
+    <div class="collapse navbar-collapse " id="navbarColor01">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/login">
+            <i class="fas fa-sign-in-alt"></i>
+            INICIAR SESION
+        </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/register">
+            <i class="far fa-address-card"></i>
+            REGISTRARSE
+        </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+<br>
+<br>
+<br>
+<div class="row">
+  <div class="col-md-4 offset-md-2">
+    <div class="card">
+      <div class="card-body">
+              <div *ngIf="msg">
+                  <div class="alert alert-danger" role="alert">
+                      {{msg}}
+                    </div>
+              </div>
+                <h2 class="login-header">LOGIN</h2>
+                <form #frmLogin="ngForm" (ngSubmit)="onLogin(frmLogin)">
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">
+                                <i class="fas fa-user"></i>
+                            </span>
+                          </div>
+                          <input name = "carnet" placeholder="CARNET" type="text" class="form-control" autofocus ngModel required>
+                        </div>
+                    <div class="form-group input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">
+                                <i class="fas fa-key"></i>
+                            </span>
+                          </div>
+                        <input name = "password" placeholder="PASSWORD" type="password" class="form-control" ngModel required>
+                    </div>
+                    <button class="btn btn-success btn-block" type="submit">
+                        Ingresar
+                    </button>
+                    <!-- <a href="/components/verificar-email">¿Olvido su contraseña?</a> -->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
