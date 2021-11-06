@@ -1,25 +1,22 @@
 import hashlib
 from cryptography.fernet import Fernet
 
-key = Fernet.generate_key()
-f = Fernet(key)
-
 # --------------- encrypt -------------------------------------
 def applyHashing(val):
-  m = hashlib.new("sha256", val)
-  return m.digest()
+  m = hashlib.sha256(val)
+  return m.hexdigest()
   
-def encryptData(data):
-  global f
+def encryptData(data, key):
+  f = Fernet(key)
   token = f.encrypt(data)
   return token
 
-def decryptData_s(data):
-  global f
+def decryptData_s(data, key):
+  f = Fernet(key)
   token = f.decrypt(data).decode()
 #   print(token)
   return token
-def decryptData(data):
-  global f
-  token = f.decrypt(data)
-  return token
+
+valor = "un texto"
+print(applyHashing(valor.encode()))
+print(type(applyHashing(valor.encode())))

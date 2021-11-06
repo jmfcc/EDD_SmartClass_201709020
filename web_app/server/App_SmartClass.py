@@ -12,9 +12,10 @@ from analyzers.Syntactic import user_list, task_list
 from flask_jwt import JWT, jwt_required, current_identity
 from werkzeug.security import safe_str_cmp
 
-from CryptDecrypt import applyHashing, encryptData, decryptData
+from CryptDecrypt import applyHashing, encryptData, decryptData_s
 from CoursesAVL_Class import CoursesAVL
 
+from cryptography.fernet import Fernet
 
 records = StudentAVL()
 # pensum = Courses_B()
@@ -23,6 +24,7 @@ notes = TablaHash()
 
 
 app = Flask(__name__)
+g_key = []
 CORS(app)
 
 # #####################################################################################################################
@@ -70,6 +72,29 @@ def readJsonFile(ruta_):
   # print(type(dataFile))
   return dataFile
 
+def readSVGImage(ruta_):
+  file = open(ruta_, "r", encoding="utf-8")
+  count = 1
+  dataFile = ""
+  # dataFile = "<svg width=\"700px\" height=\"700px\""
+  for line in file:
+    if count > 6:
+      dataFile += line
+    count += 1
+  file.close()
+  return dataFile
+
+# #####################################################################################################################
+# ########                                           NEW ENDPOINTS F-3                                           ########
+# #####################################################################################################################
+
+@app.route("/reporthash", methods=["GET"])
+def generateHashTable():
+  msg = "Generando tabla hash"
+  msg, route_img = graphHashTable(notes)
+  if route_img:
+    msg = readSVGImage(route_img)
+  return jsonify({"response": msg})
 
 
 # #####################################################################################################################
@@ -115,6 +140,18 @@ def protected():
 # ########                                           ENDPOINTS-F3                                              ########
 # #####################################################################################################################
 
+@app.route("/genkey", methods=["GET"])
+def generateKey():
+  global g_key
+  msg = "Generando una key"
+  if g_key:
+    msg = "Ya existe una key de encriptación generada"
+  else:
+    g_key.append(Fernet.generate_key())
+    msg = "Clave de encriptación generada"
+  return jsonify({"response": msg})
+
+
 @app.route("/login", methods=["POST"])
 def login():
   data = request.get_json(force=True)
@@ -135,10 +172,13 @@ def login():
       }
     else:
       if records.searchStudent(cardnumber_):
+        global g_key
         data = records.getStudent(cardnumber_)
-        if decryptData(data.password) == applyHashing(passw_.encode()):
+        # print(decryptData_s(data.password, g_key[0]), "<--->", applyHashing(passw_.encode()))
+        if decryptData_s(data.password, g_key[0]) == applyHashing(passw_.encode()):
+          print("simon si es")
           msg = {
-            "accesTkn":"studaccess",
+            "accesTkn": cardnumber_,
             "expiresIn":"4000",
             "rol": "student"
           }
@@ -169,7 +209,57 @@ def noteInsert(cardnumber_, title_, content_):
   except:
     return "F, algo fallo"
 
-@app.route("/notes", methods=["GET"]) #-----------------------------------------
+@app.route("/massivenotesbod", methods=["POST"])
+def notePost():
+  try:
+    data = request.get_json(force=True)
+    return noteTraversing(data)
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+@app.route("/massivenotespath", methods=["POST"])
+def notePost():
+  try:
+    data = request.get_json(force=True)
+    route_ = data["path"]
+    data = readJsonFile(route_)
+    return noteTraversing(data)
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+def noteTraversing(data):
+  err = 0
+  users_ = data["usuarios"]
+  msg = "I'm saving a student note" 
+  if isinstance(users_, list):
+    for usr in users_:
+      cardnumber_ = usr["carnet"]
+      notes_ = usr["apuntes"]
+      if isinstance(notes_, list):
+        for nts in notes_:
+          title_ = nts["title"]
+          content_ = nts["content"]
+          if isValid(cardnumber_, title_, content_):
+            msg = noteInsert(cardnumber_, title_, content_)
+            if msg[:1] != "Se":
+              err += 1
+  if err == 0:
+    msg = "Se han almacenado todos los apuntes"
+  else:
+    msg = f"Se detectaron ({err}) errores al insertar los apuntes"
+  return jsonify({ "response" : msg})
+
+def noteInsert(cardnumber_, title_, content_):
+  try:
+    if records.searchStudent(cardnumber_):
+      notes.insert_new_note(cardnumber_, title_, content_)
+      return "Se ha guardado el apunte"
+    else:
+      return "Ah ocurrido un error, recargue la pagina e intentelo nuevamente"
+  except:
+    return "F, algo fallo"
+
+@app.route("/notes", methods=["GET"]) #-----------------------------------------------------
 def getNotes():
   try:
     data = request.get_json(force=True)
@@ -259,17 +349,26 @@ def loadFile():
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
-@app.route("/reporte", methods=["GET"])
+@app.route("/reporte", methods=["POST"])
 def report():
   try:
+    # print("entra", request.get_data())
     data = request.get_json(force=True)
+    # print(data)
     type_ = data["tipo"]
     #Validation of type -----------------------------------------------
     msg = "Try generate a report"
-    if type_ == 0: # AVL REPORT
-      graphTreeAVL(records, False)
-      graphTreeAVL(records, True)
-      msg = " >> Info: Arbol AVL de estudiantes generado exitosamente"
+    if type_ == 0: # AVL STUDENT REPORT
+      if data["enc"]:
+        # print("entra al reporte enc")
+        msg, route_img = graphTreeAVL(records, False, None)
+      else:
+        # print("entra al reporte desenc")
+        msg, route_img = graphTreeAVL(records, True, g_key[0])
+      if route_img:
+        # print(route_img)
+        msg = readSVGImage(route_img)
+        # print(msg)
     elif type_ == 1: # DISP MATRIX TASK
       cardnumber_ = data["carnet"]
       year_ = data["año"]
@@ -321,14 +420,14 @@ def report():
           msg = " >> Error: No hay registros de {}".format(str(cardNumber_))
       else:
         msg = " >> Error: Verifique sus datos"
-    elif type_ == 3: # B-TREE PENSUM
+    elif type_ == 3: # B-TREE PENSUM(Modify to AVL)
       msg = graphTreeAVLCourses(pensum, "Pensum")
       # if not pensum.isEmpty(pensum.Root):
         # graphBTree(pensum, "Pensum")
       #   msg = " >> Info: Arbol B de pensum generado"
       # else:
       #   msg = " >> Error: No hay registros en pensum"
-    elif type_ == 4: # B-TREE COURSES
+    elif type_ == 4: # B-TREE COURSES(Modify to AVL)
       cardnumber_ = data["carnet"]
       year_ = int(data["año"])
       semester_ = int(data["semestre"])
@@ -381,17 +480,18 @@ def studentInsert():
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
 def saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
+  global g_key
   if isValid(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
     if records.searchStudent(cardnumber_):
       return " >> Error: El carnet {} ya está registrado".format(cardnumber_)
     else:
       # print("va a pasar el encriptado de password")
       # print("pasa el encriptado de password")
-      dpi_ = encryptData(dpi_.encode())
-      name_ = encryptData(name_.encode())
-      email_ = encryptData(email_.encode())
-      passw_ = encryptData(applyHashing(passw_.encode()))
-      age_ = encryptData(str(age_).encode())
+      dpi_ = encryptData(dpi_.encode(),g_key[0])
+      name_ = encryptData(name_.encode(),g_key[0])
+      email_ = encryptData(email_.encode(),g_key[0])
+      passw_ = encryptData(applyHashing(passw_.encode()).encode(),g_key[0])
+      age_ = encryptData(str(age_).encode(),g_key[0])
       records.insert(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
       # notes.add_to_table(int(cardnumber_))
       return " >> Info: Datos del estudiante almacenados correctamente" 
@@ -735,7 +835,7 @@ def saveDataCourse(data_):
                           # print("Tronó en la lista semestres")
                           msg = " >> Error: Acceso invalido a lista años"
                         try:
-                          data.courses.insertData(code_, name_, credits_, pre_code_, require_)
+                          data.courses.insertData(code_, name_, credits_, pre_code_, require_)#--------------------------------------
                           # print("Se inserto ---------------------")
                           msg = " >> Info: Datos almacenados"
                         except:

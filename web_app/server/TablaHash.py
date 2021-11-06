@@ -53,7 +53,7 @@ class TablaHash:
         self.do_rehash()
 
     def do_rehash(self):
-        if self.get_percent_use() >= 0.40:
+        if self.get_percent_use() >= 0.50:
             # self.get_table()
             # print("-"*12 + " REHASH " + "-"*12)
             to_rehash = self.hash_list.copy()
