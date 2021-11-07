@@ -18,6 +18,9 @@ export class StudentServicesService {
   getStudent(data:any){
     return this.httpClient.get(this.endpoint+'/estudiante', data);
   }
+  getMyNotes(){
+    return this.httpClient.post(this.endpoint+'/mynotes', {"carnet":this.getToken()});
+  }
 
   logout(){
     this.token = '';

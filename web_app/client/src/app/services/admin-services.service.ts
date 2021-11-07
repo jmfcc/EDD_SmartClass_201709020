@@ -31,9 +31,9 @@ export class AdminServicesService {
   reportPens(data:any){
     return this.httpClient.post(this.endpoint+'/reporte', data);
   }
-  reportNotes(data:any){
-    return this.httpClient.post(this.endpoint+'/reporte', data);
-  }
+  // reportNotes(data:any){
+  //   return this.httpClient.post(this.endpoint+'/reporte', data);
+  // }
 
   login(data:UserI): Observable<JwtResponseI>{
     return this.httpClient.post<JwtResponseI>('http://localhost:3000/login',

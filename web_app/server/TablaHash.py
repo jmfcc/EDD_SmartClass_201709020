@@ -71,7 +71,7 @@ class TablaHash:
         position = self.get_position_table(card_number)
         if self.hash_list[position] == None:
             # print("No se encontró el carnet")
-            return
+            return "Error la posición esta vacía (rehashing incorrecto)"
         else:
             ciclado = 1
             position_init = position
@@ -92,7 +92,7 @@ class TablaHash:
                 
                 if ciclado > 75:
                     print("Ciclado > 75(veces)")
-                    return
+                    return "Ciclado"
                 ciclado += 1
 
     def get_position_table(self, card_number):
@@ -117,6 +117,43 @@ class TablaHash:
                     return self.next_prime(value+1)
         return value
 
+    def getNotes(self, cardnumber_):
+        dataNotes = self.getNotesBySearch(cardnumber_)
+        if isinstance(dataNotes, NoteList):
+            return dataNotes.getFormatData()
+        return dataNotes
+        
+    def delNote(self, cardnumber_, pos_):
+        dataNotes = self.getNotesBySearch(cardnumber_)
+        if isinstance(dataNotes, NoteList):
+            if dataNotes.validaPos(pos_):
+                dataNotes.delete_note(pos_)
+                return "Nota eliminada"
+            else:
+                return "Index fuera de rango"
+        return dataNotes
+
+    def getNotesBySearch(self, cardnumber_):
+        position = self.get_position_table(cardnumber_)
+        if self.hash_list[position] == None:
+            # print("No se encontró el carnet")
+            return "Error la posición esta vacía (rehashing incorrecto)"
+        else:
+            ciclado = 1
+            position_init = position
+            while True:
+
+                if self.hash_list[position] != None:
+                    if self.hash_list[position].card_number == cardnumber_:
+                        return self.hash_list[position]
+                else:
+                    return "Error no hay un carnet {} registrado".format(str(cardnumber_))
+                position = self.calculate_relative_position(position_init + ciclado**2)
+
+                if ciclado > 75:
+                    print("Ciclado > 75(veces)")
+                    return "Ciclado"
+                ciclado += 1
 
 # -----------------------------------------------------------------------------
 # -----------------------------TESTING-----------------------------------------
@@ -158,8 +195,8 @@ class TablaHash:
 # hash_test.insert_new_note(201800304,"titulo5","nota5")
 # hash_test.insert_new_note(201402040,"titulo5","nota5")
 # hash_test.insert_new_note(201709020,"titulo4","nota4")
-# hash_test.get_table()
-
+# # hash_test.get_table()
+# print(hash_test.getNotes(201709020))
 # ------------ Prime Generator Test ---------------------
 # val_list = [3]
 # for i in range(125):

@@ -189,8 +189,10 @@ def notePost():
   try:
     data = request.get_json(force=True)
     cardnumber_ = data["carnet"]
-    title_ = data["title"]
-    content_ = data["content"]
+    if not isinstance(cardnumber_, int):
+      cardnumber_ = int(cardnumber_)
+    title_ = data["Titulo"]
+    content_ = data["Contenido"]
     msg = "I'm saving a student note" 
     #Validation of type -----------------------------------------------
     if isValid(cardnumber_, title_, content_):
@@ -201,7 +203,10 @@ def notePost():
 
 def noteInsert(cardnumber_, title_, content_):
   try:
-    if records.searchStudent(cardnumber_):
+    cardnumber_s = cardnumber_
+    if not isinstance(cardnumber_s, str):
+      cardnumber_s = str(cardnumber_s)
+    if records.searchStudent(cardnumber_s):
       notes.insert_new_note(cardnumber_, title_, content_)
       return "Se ha guardado el apunte"
     else:
@@ -210,7 +215,7 @@ def noteInsert(cardnumber_, title_, content_):
     return "F, algo fallo"
 
 @app.route("/massivenotesbod", methods=["POST"])
-def notePost():
+def notebody():
   try:
     data = request.get_json(force=True)
     return noteTraversing(data)
@@ -218,7 +223,7 @@ def notePost():
     return jsonify({ "response" : "Something goes wrong, verify your data"})
 
 @app.route("/massivenotespath", methods=["POST"])
-def notePost():
+def notepath():
   try:
     data = request.get_json(force=True)
     route_ = data["path"]
@@ -234,14 +239,15 @@ def noteTraversing(data):
   if isinstance(users_, list):
     for usr in users_:
       cardnumber_ = usr["carnet"]
+      print(type(cardnumber_))
       notes_ = usr["apuntes"]
       if isinstance(notes_, list):
         for nts in notes_:
-          title_ = nts["title"]
-          content_ = nts["content"]
+          title_ = nts["Título"]
+          content_ = nts["Contenido"]
           if isValid(cardnumber_, title_, content_):
             msg = noteInsert(cardnumber_, title_, content_)
-            if msg[:1] != "Se":
+            if msg[:2] != "Se":
               err += 1
   if err == 0:
     msg = "Se han almacenado todos los apuntes"
@@ -249,30 +255,20 @@ def noteTraversing(data):
     msg = f"Se detectaron ({err}) errores al insertar los apuntes"
   return jsonify({ "response" : msg})
 
-def noteInsert(cardnumber_, title_, content_):
-  try:
-    if records.searchStudent(cardnumber_):
-      notes.insert_new_note(cardnumber_, title_, content_)
-      return "Se ha guardado el apunte"
-    else:
-      return "Ah ocurrido un error, recargue la pagina e intentelo nuevamente"
-  except:
-    return "F, algo fallo"
 
-@app.route("/notes", methods=["GET"]) #-----------------------------------------------------
+@app.route("/mynotes", methods=["POST"]) #-----------------------------------------------------
 def getNotes():
   try:
     data = request.get_json(force=True)
     cardnumber_ = data["carnet"]
-    title_ = data["title"]
-    content_ = data["content"]
-    msg = "I'm saving a student note" 
+    if not isinstance(cardnumber_, int):
+      cardnumber_ = int(cardnumber_)
+    msg = "I'm will send a student notes" 
     #Validation of type -----------------------------------------------
-    if isValid(cardnumber_, title_, content_):
+    if isValid(cardnumber_):
       try:
-        if records.searchStudent(cardnumber_):
-          notes.insert_new_note(cardnumber_, title_, content_)
-          msg = "Se ha guardado el apunte"
+        if records.searchStudent(str(cardnumber_)):
+          msg = notes.getNotes(cardnumber_)
         else:
           msg = "Ah ocurrido un error, recargue la pagina e intentelo nuevamente"
       except:
@@ -302,7 +298,36 @@ def loadFile():
     #Load -----------------------------------------------
     if isValid(type_, path_):
       if validatePath(path_):
-        if type_ == "estudiante":
+        if type_ == "estudiantejson":
+          dataload = readJsonFile(path_)
+          students_ = dataload['estudiantes']
+          # print("llego a estudiantes")
+          if isinstance(students_, list):
+            err = 0 
+            for dstud in students_:
+              # print("itera lista estudiantes")
+              cardnumber_ = dstud['carnet']
+              if not isinstance(cardnumber_, str):
+                # print("parsea carnet a string")
+                cardnumber_ = str(cardnumber_)
+              dpi_ = dstud['DPI']
+              if not isinstance(dpi_, str):
+                # print("parsea dpi a string")
+                dpi_ = str(dpi_)
+              name_ = dstud['nombre']
+              carrer_ = dstud['carrera']
+              email_ = dstud['correo']
+              passw_ = dstud['password']
+              age_ = dstud['edad']
+              # print("Completa de obtener los datos de estudiante")
+              msg = saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, 0, age_)
+              if msg[:9] == " >> Error":
+                err += 1
+            if err == 0:
+              msg = " >> Info: Se han almacenado todos los registros de estudiantes"
+            else:
+              msg = f" >> Info: Han ocurrido ({err}) registros que no se pudieron almacenar"
+        elif type_ == "estudiante":
           uploadStudentFile(path_)
           aux = user_list.First
           countUerr = 0
@@ -481,17 +506,21 @@ def studentInsert():
 
 def saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
   global g_key
+  # print("save data function")
   if isValid(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_):
     if records.searchStudent(cardnumber_):
       return " >> Error: El carnet {} ya está registrado".format(cardnumber_)
     else:
+      # print("all ok")
       # print("va a pasar el encriptado de password")
       # print("pasa el encriptado de password")
       dpi_ = encryptData(dpi_.encode(),g_key[0])
       name_ = encryptData(name_.encode(),g_key[0])
       email_ = encryptData(email_.encode(),g_key[0])
       passw_ = encryptData(applyHashing(passw_.encode()).encode(),g_key[0])
+      # print("a parsear la edad")
       age_ = encryptData(str(age_).encode(),g_key[0])
+      # print("ya parseo la edad")
       records.insert(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
       # notes.add_to_table(int(cardnumber_))
       return " >> Info: Datos del estudiante almacenados correctamente" 

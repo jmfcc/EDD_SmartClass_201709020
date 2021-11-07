@@ -39,15 +39,22 @@
         <thead>
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Apellido</th>
-                <th scope="col">Status</th>
-                <th scope="col">Editar</th>
+                <th scope="col">Titulo</th>
+                <th scope="col">Contenido</th>
                 <th scope="col">Eliminar</th>
             </tr>
         </thead>
         <tbody>
-
+            <tr *ngFor="let note of dataN.response">
+                <td>{{note.pos}}</td>
+                <td>{{note.titulo}}</td>
+                <td>{{note.contenido}}</td>
+                <td>
+                    <button class="btn btn-danger" (click)="deleteN('{{note.contenido}}')">
+                        <i class="fas fa-eraser"></i>
+                    </button>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>
