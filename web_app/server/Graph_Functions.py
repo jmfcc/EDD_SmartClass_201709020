@@ -453,10 +453,13 @@ def graphRedCourses(root_, code_):
 
     if root_.Root != None:
         # print("No esta vacío")
-        n, m = structureRedC(root_, content, code_, 0)
-        print(n, m)
+        try:
+            n, m = structureRedC(root_, content, code_, 0)
+        except:
+            return ""
+        # print(n, m)
     else:
-        return "El arbol está vacío", None
+        return "El arbol de cursos está vacío", None
 
     content[0] += "".join(content[1]) + "\n}"
 
@@ -502,8 +505,9 @@ def structureRedC(root_,content, code_, group):
                     content[2].append(id_node)
                     content[1].append(f'\t"{id_node}"[label="Codigo: {code}\\n{name}"];\n')
                 color = f"color={c[c_i]}, fontcolor={c[c_i]}"
-                print(color)
-                link = f'\t"{ini}":e -> "{id_node}":w[label=\"{lbl}\", {color}, group={group}];\n'
+                # print(color)
+                link = f'\t"{ini}":e -> "{id_node}":w[label=\"{lbl}\", {color}];\n'
+                # link = f'\t"{ini}":e -> "{id_node}":w[label=\"{lbl}\", {color}, group={group}];\n'
                 if not link in content[1]:
                     if ini != "":
                         content[1].append(link)
@@ -516,5 +520,11 @@ def structureRedC(root_,content, code_, group):
         return id_node, credits
     else:
         print(f"Codigo inexistente {code_}")
+        id_node = f"Missed_Code: {code_}"
+        if not id_node in content[2]:
+            content[2].append(id_node)
+            content[1].append(f'\t"{id_node}"[label="\\n{id_node}\\n ", color="red", fontcolor="red"];\n')
+
+        return id_node, "??"
 
 

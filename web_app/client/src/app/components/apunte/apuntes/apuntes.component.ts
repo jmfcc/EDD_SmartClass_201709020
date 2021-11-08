@@ -23,11 +23,9 @@ export class ApuntesComponent implements OnInit {
     this.studentService.getMyNotes().subscribe(res=>{
       this.dataN = res || "";
       console.log(this.dataN);
-    //   console.log(typeof(this.msg.response));
-    //   console.log(JSON.parse(this.msg.response || ""))
-    //   if (this.msg.response instanceof Array){
-    //     console.log("si es array")
-    //   }
+      if (!Array.isArray(this.dataN.response)){
+        this.msg = res || "";
+      }
     });
   }
 

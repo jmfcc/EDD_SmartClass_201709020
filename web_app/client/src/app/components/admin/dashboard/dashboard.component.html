@@ -47,15 +47,17 @@
                 <h3 class="text-light">ESTUDIANTES</h3>
             </div>
             <div class="col">
-                <div class="input-group mb-3">
-                    <div class="custom-file">
-                        <label class="custom-file-label" for="inputGroupFile02" aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
-                        <input type="file" class="custom-file-input" id="inputGroupFile02">
+                <form #frmLogin="ngForm" (ngSubmit)="loadNotes(frmLogin)">
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <label class="custom-file-label" for="festudiantes" aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
+                            <input type="file" class="custom-file-input" id="festudiantes" placeholder="Seleccionar Archivo">
+                        </div>
+                        <div class="input-group-append">
+                            <button class="input-group-text" type="submit">Cargar</button>
+                        </div>
                     </div>
-                    <div class="input-group-append">
-                        <span class="input-group-text" id="inputGroupFileAddon02">Cargar</span>
-                    </div>
-                </div>
+                </form>
             </div>
             <div class="col">
                 <div class="row h-100">
@@ -74,7 +76,8 @@
                 <form #frmLogin="ngForm" (ngSubmit)="loadNotes(frmLogin)">
                     <div class="input-group mb-3">
                         <div class="custom-file">
-                            <label class="custom-file-label" for="fapuntes" aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
+                            <label class="custom-file-label" for="fapuntes"
+                                aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
                             <input type="file" class="custom-file-input" id="fapuntes">
                         </div>
                         <div class="input-group-append">
@@ -99,7 +102,8 @@
                 <form #frmLogin="ngForm" (ngSubmit)="loadNotes(frmLogin)">
                     <div class="input-group mb-3">
                         <div class="custom-file">
-                            <label class="custom-file-label" for="fapuntes" aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
+                            <label class="custom-file-label" for="fapuntes"
+                                aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
                             <input type="file" class="custom-file-input" id="fapuntes">
                         </div>
                         <div class="input-group-append">
@@ -111,7 +115,7 @@
             <div class="col">
                 <div class="row h-100">
                     <div class="col-sm-12 my-auto">
-                        <a class="btn btn-dark" (click)="reportThash()">REPORTE</a>
+                        <a class="btn btn-dark d-none" (click)="reportThash()">REPORTE</a>
                     </div>
                 </div>
             </div>

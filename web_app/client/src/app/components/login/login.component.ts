@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
         if (res.rol == "admin"){
           this.router.navigate(['/admindashboard']);
         }else if (res.rol == "student"){
-          this.router.navigate(['/nuevoapunte']);
+          this.router.navigate(['/apuntes']);
         }else{
           this.msg = "Error: Verifica tus datos";
         }

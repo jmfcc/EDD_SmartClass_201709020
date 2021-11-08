@@ -137,7 +137,7 @@ class TablaHash:
         position = self.get_position_table(cardnumber_)
         if self.hash_list[position] == None:
             # print("No se encontró el carnet")
-            return "Error la posición esta vacía (rehashing incorrecto)"
+            return "--- Sin apuntes ---"
         else:
             ciclado = 1
             position_init = position

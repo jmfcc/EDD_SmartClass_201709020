@@ -368,7 +368,7 @@ def loadFile():
           dataload = readJsonFile(path_)
           kdata = dataload.keys()
           if "Estudiantes" in kdata and len(kdata)==1:
-            msg = saveDataCourse(dataload)
+            msg = traversingJsonStudentCourses(dataload)
           elif "Cursos" in kdata and len(kdata)==1:
             msg = saveDataPensum(dataload)
           else:
@@ -483,7 +483,9 @@ def report():
         msg = " >> Error: Verifique sus datos"
     elif type_ == 5:
       code_ = data["codigo"]
-      msg = graphRedCourses(pensum, code_)
+      msg, route_img = graphRedCourses(pensum, code_)  
+      if route_img:
+        msg = readSVGImage(route_img) 
     return jsonify({ "response" : msg })
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
