@@ -34,18 +34,22 @@ export class StudentServicesService {
     return this.httpClient.post(this.endpoint + '/reporte',
       {
         "tipo": 5,
-        "codigo": data.codigo 
+        "codigo": data.codigo
       });
   }
-  getMyCourses(data: any) {
+  getMyCourses() {
     return this.httpClient.post(this.endpoint + '/reporte',
       {
-        "tipo": 5,
-        "codigo": data.codigo 
+        "tipo": 4,
+        "carnet": this.getToken()
       });
   }
   assignCourse(data: any) {
-    return this.httpClient.post(this.endpoint + '/reporte', data);
+    return this.httpClient.post(this.endpoint + '/courseassing',
+      {
+        "carnet": this.getToken(),
+        "Codigo": data.codigo
+      });
   }
 
   logout() {

@@ -5,7 +5,7 @@ from flask_cors import CORS
 from Student_AVL import StudentAVL
 from Courses_Class import Courses_B
 from TablaHash import TablaHash
-from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix, graphBTree, graphHashTable, graphTreeAVLCourses, graphRedCourses
+from Graph_Functions import graphDoubleList, graphTreeAVL, graphDMatrix, graphBTree, graphHashTable, graphTreeAVLCourses, graphRedCourses, graphRedPensum
 from analyzers.Syntactic import parser
 from analyzers.Syntactic import user_list, task_list
 
@@ -278,12 +278,27 @@ def getNotes():
 
 @app.route("/courseassing", methods=["POST"])
 def assignCourse():
-  data = request.get_json(force=True)
-  code_ = data["Codigo"]
-  name_ = data["Nombre"]
-  credits_ = data["Creditos"]
-  pre_code_ = data["Prerequisitos"]
-  require_ = data["Obligatorio"]
+  try:
+    data = request.get_json(force=True)
+    cardnumber_ = data["carnet"]
+    code_ = data["Codigo"]
+    print(type(cardnumber_), cardnumber_)
+    if not isinstance(cardnumber_, str):
+      cardnumber_ = str(cardnumber_)
+    course_ = pensum.getCourse(code_)
+    msg = "Assign a course"
+    if course_ is not None:
+      # print("Voy a asignarlos")
+      msg, inc = saveDataCourse(cardnumber_, 2021, 2, code_, course_.name, course_.credits, course_.pre_code, course_.required)
+      # print("Ya se asignaron")
+      if inc == 0:
+        msg = getMyGraphCourses(cardnumber_, 2021, 2, code_)
+    else:
+      msg = "El curso que intentó asignar no existe"
+    return jsonify({ "response" : msg})
+  except:
+    return jsonify({ "response" : "Something goes wrong, verify your data"})
+
 
 
 
@@ -376,7 +391,7 @@ def loadFile():
         else:
           msg = " >> Error: No se puede reconocer el tipo solicitado"
       else:
-        msg = " >> Error: Ruta inválida"
+        msg = " >> Error: La ruta del archivo es inválida"
     return jsonify({ "response" : msg})
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
@@ -461,34 +476,53 @@ def report():
       #   msg = " >> Error: No hay registros en pensum"
     elif type_ == 4: # B-TREE COURSES(Modify to AVL)
       cardnumber_ = data["carnet"]
-      year_ = int(data["año"])
-      semester_ = int(data["semestre"])
-      if isValid(cardnumber_, year_, semester_):
-        if records.searchStudent(cardnumber_):
-          data = records.getStudent(cardnumber_) # NodeStudent
-          if not data.years.isEmpty() and data.years.searchYear(year_):
-            data = data.years.getYear(year_) # NodeYear
-            if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
-              data = data.semesters.getSemester(semester_) # NodeSemester
-              # graphBTree(data.courses, "StudentCourses")
-              graphTreeAVLCourses(data.courses, "StudentCourses")
-              msg = " >> Info: El arbol de cursos ha sido generado"
-            else:
-              msg = " >> Error: No hay registros del semestre solicitado"
-          else:
-            msg = " >> Error: No hay registros del año solicitado"
-        else:
-          msg = " >> Error: No hay registros del carnet solicitado"
-      else:
-        msg = " >> Error: Verifique sus datos"
-    elif type_ == 5:
+      if not isinstance(cardnumber_, str):
+        cardnumber_ = str(cardnumber_)
+
+      # year_ = int(data["año"])
+      # semester_ = int(data["semestre"])
+      year_ = 2021
+      semester_ = 2
+      msg = getMyGraphCourses(cardnumber_, year_, semester_, "")
+    elif type_ == 5: # Red Curso (Prerrequisito)
       code_ = data["codigo"]
       msg, route_img = graphRedCourses(pensum, code_)  
+      if route_img:
+        msg = readSVGImage(route_img) 
+    elif type_ == 6: # Red Pensum (Prerrequisito)
+      msg, route_img = graphRedPensum(pensum)  
       if route_img:
         msg = readSVGImage(route_img) 
     return jsonify({ "response" : msg })
   except:
     return jsonify({ "response" : "Something goes wrong, verify your data"})
+
+def getMyGraphCourses(cardnumber_, year_, semester_, code_):
+  msg = ""
+  if isValid(cardnumber_, year_, semester_):
+    # print("datos validos")
+    if records.searchStudent(cardnumber_):
+      data = records.getStudent(cardnumber_) # NodeStudent
+      # print("se obtuvo al estudiante")
+      if not data.years.isEmpty() and data.years.searchYear(year_):
+        data = data.years.getYear(year_) # NodeYear
+        # print("se obtuvo el año")
+        if not data.semesters.isEmpty() and data.semesters.searchSemester(semester_):
+          data = data.semesters.getSemester(semester_) # NodeSemester
+          # print("se obtuvo el semestre")
+          # graphBTree(data.courses, "StudentCourses")
+          msg, route_img = graphTreeAVLCourses(data.courses, "Estudiante", code_)
+          if route_img:
+            msg = readSVGImage(route_img) 
+        else:
+          msg = f" >> Info: No hay registros del semestre ({semester_}) del año {year_}"
+      else:
+        msg = f" >> Info: No hay registros del año {year_}"
+    else:
+      msg = " >> Info: No hay registros del carnet solicitado"
+  else:
+    msg = " >> Info: Verifique sus datos"
+  return msg
 
 # ---------------------------------------------------------------------------------------------------------------------
 # ---                                          CRUD ESTUDIANTES                                                     ---
@@ -851,7 +885,8 @@ def traversingJsonStudentCourses(data_):
                     credits_ = courseData["Creditos"]
                     pre_code_ = courseData["Prerequisitos"]
                     require_ = courseData["Obligatorio"]
-                    saveDataCourse(cardnumber_, year_, semester_, code_, name_, credits_, pre_code_, require_)
+                    msg, inc = saveDataCourse(cardnumber_, year_, semester_, code_, name_, credits_, pre_code_, require_)
+                    countErr += inc
                 else:
                   msg = " >> Error: Se esperaba una lista de cursos"
                   countErr += 1
@@ -894,8 +929,11 @@ def saveDataCourse(cardnumber_, year_, semester_, code_, name_, credits_, pre_co
         # print("Tronó en la lista semestres")
         return " >> Error: Acceso invalido a lista años", 1
       try:
-        data.courses.insertData(code_, name_, credits_, pre_code_, require_)#--------------------------------------
-        return " >> Info: Datos almacenados", 0
+        if data.courses.searchCourse(code_):
+          return " >> Info: El curso ya está asginado", 0
+        else:
+          data.courses.insertData(code_, name_, credits_, pre_code_, require_)#--------------------------------------
+          return " >> Info: Curso asignado exitosamente", 0
       except:
         return " >> Error: Inserción Fallida", 1
     else:  

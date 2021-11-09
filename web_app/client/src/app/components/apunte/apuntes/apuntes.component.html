@@ -31,8 +31,8 @@
 <div class="container text-center text-light">
     <h1>APUNTES</h1>
 </div>
-<div class="container text-center" *ngIf="msg.response; else showtable">
-    <h3 class="text-light">{{msg.response}}</h3>
+<div class="container text-center">
+    <h3 class="text-light" *ngIf="msg.response; else showtable">{{msg.response}}</h3>
 </div>
 <ng-template #showtable>
     <table class="table bg-light table-striped mt-4 mb-4">
@@ -48,7 +48,9 @@
             <tr *ngFor="let note of dataN.response">
                 <td>{{note.pos}}</td>
                 <td>{{note.titulo}}</td>
-                <td>{{note.contenido}}</td>
+                <td>
+                    <pre class="text-left">{{note.contenido}}</pre>
+                </td>
                 <td>
                     <button class="btn btn-danger" (click)="deleteN('{{note.contenido}}')">
                         <i class="fas fa-eraser"></i>
@@ -57,4 +59,4 @@
             </tr>
         </tbody>
     </table>
-  </ng-template>
+</ng-template>

@@ -11,6 +11,7 @@ import { StudentServicesService } from 'src/app/services/student-services.servic
 export class CursosComponent implements OnInit {
 
   msg:ResponseI = {};
+  // isShowAssign:boolean = false;
   msg2:ResponseI = {};
   report:ResponseI = {};
   safeHtml: SafeHtml = "";
@@ -19,6 +20,7 @@ export class CursosComponent implements OnInit {
   constructor(private studentService:StudentServicesService, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
+    this.showMyCourses();
   }
 
   redCurso(form:any): void {
@@ -28,6 +30,7 @@ export class CursosComponent implements OnInit {
         this.report = res || "";
         this.msg.response = "";
         this.generateComponents()
+        form.reset();
       });
     }else{
       this.msg.response = "Debes esciribir un codigo de curso"
@@ -39,18 +42,28 @@ export class CursosComponent implements OnInit {
       this.studentService.assignCourse(form.value).subscribe(res=>{
         this.report = res || "";
         this.msg2.response = "";
-        this.generateComponents()
+        this.generateComponentsC()
+        form.reset();
+        // this.isShowAssign = true;
       });
     }else{
       this.msg2.response = "Debes esciribir un codigo de curso"
     }
   }
-
+  
   generateComponents(): void{
     this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(this.report.response || "")
   }
   generateComponentsC(): void{
     this.safeHtmlMyCourses = this.sanitizer.bypassSecurityTrustHtml(this.report.response || "")
+  }
+  
+  showMyCourses(): void {
+    this.studentService.getMyCourses().subscribe(res=>{
+      this.report = res || "";
+      this.msg2.response = "";
+      this.generateComponentsC()
+    });
   }
 
 }

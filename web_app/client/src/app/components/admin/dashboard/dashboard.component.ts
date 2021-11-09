@@ -37,6 +37,12 @@ export class DashboardComponent implements OnInit {
       this.generateComponents()
     });
   }
+  reportPensum(): void {
+    this.adminService.reportPens().subscribe(res=>{
+      this.report = res || "";
+      this.generateComponents()
+    });
+  }
   
   reportStud(val:any): void {
     console.log(val);

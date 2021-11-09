@@ -28,8 +28,8 @@ export class AdminServicesService {
   reportStud(data:any){
     return this.httpClient.post(this.endpoint+'/reporte', data);
   }
-  reportPens(data:any){
-    return this.httpClient.post(this.endpoint+'/reporte', data);
+  reportPens(){
+    return this.httpClient.post(this.endpoint+'/reporte', {"tipo":6});
   }
   // reportNotes(data:any){
   //   return this.httpClient.post(this.endpoint+'/reporte', data);
