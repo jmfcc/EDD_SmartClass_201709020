@@ -904,6 +904,8 @@ def traversingJsonStudentCourses(data_):
     countErr += 1
   if countErr != 0:
     return " >> Error: Se registraron {} errores".format(str(countErr))
+  else:
+    msg = " >> Info: Se han almacenado los cursos (estudiantes)"
   return msg
  
 def saveDataCourse(cardnumber_, year_, semester_, code_, name_, credits_, pre_code_, require_):
@@ -966,7 +968,7 @@ def saveDataPensum(data_):
       else:
         allOk += 1
     if allOk == 0:
-      msg = " >> Info: La carga de cursos ha sido completada"
+      msg = " >> Info: La carga de cursos (pensum) ha sido completada"
     else:
       msg = " >> Error: Se registraron {} errores".format(str(allOk))
   else:
