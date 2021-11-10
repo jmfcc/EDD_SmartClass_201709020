@@ -21,8 +21,38 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  loadStudent(form:any): void {
+    // console.log(form.value)
+    if (form.value.path != ""){
+      this.adminService.load_S(form.value).subscribe(res=>{
+        this.msg = res || "";
+        form.reset();
+      });
+    }else{
+      this.msg.response = "El campo de la direccion del archivo de estudiantes está vacía"
+    }
+  }
   loadNotes(form:any): void {
-    console.log(form)
+    // console.log(form.value)
+    if (form.value.path != ""){
+      this.adminService.load_N(form.value).subscribe(res=>{
+        this.msg = res || "";
+        form.reset();
+      });
+    }else{
+      this.msg.response = "El campo de la direccion del archivo de apuntes está vacía"
+    }
+  }
+  loadCourses(form:any): void {
+    // console.log(form.value)
+    if (form.value.path != ""){
+      this.adminService.load_C(form.value).subscribe(res=>{
+        this.msg = res || "";
+        form.reset();
+      });
+    }else{
+      this.msg.response = "El campo de la direccion del archivo de cursos está vacía"
+    }
   }
 
   generate(): void {

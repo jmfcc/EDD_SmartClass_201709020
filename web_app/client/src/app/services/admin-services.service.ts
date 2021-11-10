@@ -22,6 +22,24 @@ export class AdminServicesService {
   gen_key(){
     return this.httpClient.get(this.endpoint+'/genkey');
   }
+  load_S(data:any){
+    return this.httpClient.post(this.endpoint+'/carga',
+    {
+      "tipo":"estudiantejson",
+      "path": data.path
+    });
+  }
+  load_C(data:any){
+    return this.httpClient.post(this.endpoint+'/carga',
+    {
+      "tipo":"curso",
+      "path": data.path
+    });
+  }
+  load_N(data:any){
+    return this.httpClient.post(this.endpoint+'/massivenotespath', data);
+  }
+
   reportTHash(){
     return this.httpClient.get(this.endpoint+'/reporthash');
   }

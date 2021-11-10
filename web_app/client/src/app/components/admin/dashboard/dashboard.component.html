@@ -47,14 +47,17 @@
                 <h3 class="text-light">ESTUDIANTES</h3>
             </div>
             <div class="col">
-                <form #frmLogin="ngForm" (ngSubmit)="loadNotes(frmLogin)">
-                    <div class="input-group mb-3">
-                        <div class="custom-file">
-                            <label class="custom-file-label" for="festudiantes" aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
-                            <input type="file" class="custom-file-input" id="festudiantes" placeholder="Seleccionar Archivo">
+                <form #frmStudent="ngForm" (ngSubmit)="loadStudent(frmStudent)">
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="form-group input-group">
+                                <input name="path" placeholder="PATH" type="text" class="form-control" autofocus ngModel required>
+                            </div>
                         </div>
-                        <div class="input-group-append">
-                            <button class="input-group-text" type="submit">Cargar</button>
+                        <div class="col">
+                            <button class="btn btn-success btn-block" type="submit">
+                                <i class="fas fa-upload"></i>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -73,15 +76,17 @@
                 <h3 class="text-light">APUNTES</h3>
             </div>
             <div class="col">
-                <form #frmLogin="ngForm" (ngSubmit)="loadNotes(frmLogin)">
-                    <div class="input-group mb-3">
-                        <div class="custom-file">
-                            <label class="custom-file-label" for="fapuntes"
-                                aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
-                            <input type="file" class="custom-file-input" id="fapuntes">
+                <form #frmNotes="ngForm" (ngSubmit)="loadNotes(frmNotes)">
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="form-group input-group">
+                                <input name="path" placeholder="PATH" type="text" class="form-control" autofocus ngModel required>
+                            </div>
                         </div>
-                        <div class="input-group-append">
-                            <button class="input-group-text" type="submit">Cargar</button>
+                        <div class="col">
+                            <button class="btn btn-success btn-block" type="submit">
+                                <i class="fas fa-upload"></i>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -99,15 +104,17 @@
                 <h3 class="text-light">CURSOS</h3>
             </div>
             <div class="col">
-                <form #frmLogin="ngForm" (ngSubmit)="loadNotes(frmLogin)">
-                    <div class="input-group mb-3">
-                        <div class="custom-file">
-                            <label class="custom-file-label" for="fapuntes"
-                                aria-describedby="inputGroupFileAddon02">Seleccionar Archivo</label>
-                            <input type="file" class="custom-file-input" id="fapuntes">
+                <form #frmCourses="ngForm" (ngSubmit)="loadCourses(frmCourses)">
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="form-group input-group">
+                                <input name="path" placeholder="PATH" type="text" class="form-control" autofocus ngModel required>
+                            </div>
                         </div>
-                        <div class="input-group-append">
-                            <button class="input-group-text" type="submit">Cargar</button>
+                        <div class="col">
+                            <button class="btn btn-success btn-block" type="submit">
+                                <i class="fas fa-upload"></i>
+                            </button>
                         </div>
                     </div>
                 </form>
