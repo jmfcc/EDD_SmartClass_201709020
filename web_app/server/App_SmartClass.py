@@ -203,10 +203,12 @@ def notePost():
 
 def noteInsert(cardnumber_, title_, content_):
   try:
-    cardnumber_s = cardnumber_
-    if not isinstance(cardnumber_s, str):
-      cardnumber_s = str(cardnumber_s)
-    if records.searchStudent(cardnumber_s):
+    # cardnumber_ = cardnumber_
+    if not isinstance(cardnumber_, str):
+      cardnumber_ = str(cardnumber_)
+    if records.searchStudent(cardnumber_):
+      if not isinstance(cardnumber_, int):
+        cardnumber_ = int(cardnumber_)
       notes.insert_new_note(cardnumber_, title_, content_)
       return "Se ha guardado el apunte"
     else:
@@ -243,8 +245,8 @@ def noteTraversing(data):
       notes_ = usr["apuntes"]
       if isinstance(notes_, list):
         for nts in notes_:
-          title_ = nts["Título"]
-          content_ = nts["Contenido"]
+          title_ = nts["titulo"]
+          content_ = nts["contenido"]
           if isValid(cardnumber_, title_, content_):
             msg = noteInsert(cardnumber_, title_, content_)
             if msg[:2] != "Se":
@@ -340,9 +342,10 @@ def loadFile():
               carrer_ = dstud['carrera']
               email_ = dstud['correo']
               passw_ = dstud['password']
+              credits_ = dstud['creditos']
               age_ = dstud['edad']
               # print("Completa de obtener los datos de estudiante")
-              msg = saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, 0, age_)
+              msg = saveDataStudent(cardnumber_, dpi_, name_, carrer_, email_, passw_, credits_, age_)
               if msg[:9] == " >> Error":
                 err += 1
             if err == 0:
@@ -905,8 +908,7 @@ def traversingJsonStudentCourses(data_):
   if countErr != 0:
     return " >> Error: Se registraron {} errores".format(str(countErr))
   else:
-    msg = " >> Info: Se han almacenado los cursos (estudiantes)"
-  return msg
+    return " >> Info: Se han almacenado los cursos (estudiantes)"
  
 def saveDataCourse(cardnumber_, year_, semester_, code_, name_, credits_, pre_code_, require_):
   if isValid(cardnumber_, year_, semester_, code_, name_, credits_, require_):
